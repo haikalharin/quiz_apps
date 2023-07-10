@@ -1,18 +1,19 @@
-import 'package:base_mvvm/viewmodel/comment/controller/comment_controller.dart';
-import 'package:base_mvvm/viewmodel/post/controller/post_controller.dart';
-import 'package:base_mvvm/viewmodel/todo/controller/todo_controller.dart';
-import 'package:base_mvvm/viewmodel/user/controller/user_controller.dart';
-import 'package:base_mvvm/repository/comment/comment_repository.dart';
-import 'package:base_mvvm/repository/post/post_repository.dart';
-import 'package:base_mvvm/data/api/comment/comment_api.dart';
 import 'package:base_mvvm/common/network/dio_client.dart';
+import 'package:base_mvvm/data/api/comment/comment_api.dart';
 import 'package:base_mvvm/data/api/post/post_api.dart';
 import 'package:base_mvvm/data/api/todo/todo_api.dart';
 import 'package:base_mvvm/data/api/user/user_api.dart';
+import 'package:base_mvvm/repository/comment/comment_repository.dart';
+import 'package:base_mvvm/repository/post/post_repository.dart';
+import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+
 import 'repository/todo/todo_repository.dart';
 import 'repository/user/user_repository.dart';
-import 'package:get_it/get_it.dart';
-import 'package:dio/dio.dart';
+import 'viewmodel/comment/cubit/comment_cubit.dart';
+import 'viewmodel/post/cubit/post_cubit.dart';
+import 'viewmodel/todo/cubit/todo_cubit.dart';
+import 'viewmodel/user/cubit/user_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -56,23 +57,19 @@ Future<void> init() async {
     () => CommentRepository(commentApi: getIt<CommentApi>()),
   );
 
-  //UserController
+  //User Bloc
   getIt.registerFactory(
-    () => UserController(userRepository: getIt<UserRepository>()),
-  );
+      () => UserCubit(userRepository: getIt<UserRepository>()));
 
-  //TodoController
+  //_Todo Bloc
   getIt.registerFactory(
-    () => ToDoController(todoRepository: getIt<TodoRepository>()),
-  );
+      () => TodoCubit(todoRepository: getIt<TodoRepository>()));
 
-  //PostController
+  //Post Bloc
   getIt.registerFactory(
-    () => PostController(postRepository: getIt<PostRepository>()),
-  );
-  //
-  // //CommentController
+      () => PostCubit(postRepository: getIt<PostRepository>()));
+
+  //Comment Bloc
   getIt.registerFactory(
-    () => CommentController(commentRepository: getIt<CommentRepository>()),
-  );
+      () => CommentCubit(commentRepository: getIt<CommentRepository>()));
 }
