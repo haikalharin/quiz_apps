@@ -1,21 +1,21 @@
-import 'package:base_mvvm/viewmodel/todo/controller/todo_controller.dart';
-import 'package:base_mvvm/common/controller/base_controller.dart';
-import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
 import 'package:base_mvvm/common/dialog/progress_dialog.dart';
-import 'package:base_mvvm/common/widget/date_time_picker.dart';
-import 'package:base_mvvm/view/todo/widget/todo_list_item.dart';
 import 'package:base_mvvm/common/dialog/retry_dialog.dart';
-import 'package:base_mvvm/common/widget/empty_widget.dart';
+import 'package:base_mvvm/common/widget/date_time_picker.dart';
 import 'package:base_mvvm/common/widget/drop_down.dart';
+import 'package:base_mvvm/common/widget/empty_widget.dart';
 import 'package:base_mvvm/common/widget/popup_menu.dart';
+import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
 import 'package:base_mvvm/common/widget/text_input.dart';
 import 'package:base_mvvm/core/app_extension.dart';
+import 'package:base_mvvm/core/app_style.dart';
 import 'package:base_mvvm/data/model/todo/todo.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/core/app_style.dart';
+import 'package:base_mvvm/view/todo/widget/todo_list_item.dart';
+import 'package:base_mvvm/viewmodel/todo/cubit/todo_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:base_mvvm/di.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum Mode { create, update }
 
@@ -29,14 +29,6 @@ class ToDoListScreen extends StatefulWidget {
 }
 
 class _ToDoListScreenState extends State<ToDoListScreen> {
-  final ToDoController _controller = getIt<ToDoController>();
-
-  @override
-  void initState() {
-    _controller.getTodos(widget.user.id!);
-    super.initState();
-  }
-
   PreferredSizeWidget _appBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
@@ -56,18 +48,26 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
           const Text("Todo", style: headLine2),
           const SizedBox(width: 10),
           const Icon(Icons.archive_outlined, color: Color(0xFFF4511E)),
-          Obx(
-            () => Text(
-              _controller.todosCount.string,
-              style: const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.bold),
-            ).paddingAll(20),
+          Builder(
+            builder: (context) {
+              final todoCubit = context.watch<TodoCubit>();
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  todoCubit.getTodoCount,
+                  style: const TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.bold),
+                ),
+              );
+            },
           ),
           const Spacer(),
           PopupMenu<TodoStatus>(
             items: TodoStatus.values,
             onChanged: (TodoStatus status) {
-              _controller.getTodos(widget.user.id!, status: status);
+              context
+                  .read<TodoCubit>()
+                  .getTodos(widget.user.id!, status: status);
             },
           )
         ],
@@ -100,42 +100,44 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
 
   createOrUpdateTodo(ToDo todo, Mode mode) {
     if (mode == Mode.create) {
-      _controller.createTodo(todo);
+      context.read<TodoCubit>().createTodo(todo);
     } else {
-      _controller.updateTodo(todo);
+      context.read<TodoCubit>().updateTodo(todo);
     }
     Navigator.pop(context);
 
     showDialog(
       context: context,
       builder: (_) {
-        return Obx(
-          () {
-            switch (_controller.apiStatus.value) {
-              case ApiState.loading:
+        return BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
+          builder: (BuildContext context, GenericCubitState<List<ToDo>> state) {
+            switch (state.status) {
+              case Status.empty:
+                return const SizedBox();
+              case Status.loading:
                 return ProgressDialog(
                   title: "${mode.name}ing task...",
                   isProgressed: true,
                 );
-              case ApiState.success:
+              case Status.failure:
+                return RetryDialog(
+                  title: state.error ?? "Error",
+                  onRetryPressed: () {
+                    if (mode == Mode.create) {
+                      context.read<TodoCubit>().createTodo(todo);
+                    } else {
+                      context.read<TodoCubit>().updateTodo(todo);
+                    }
+                  },
+                );
+              case Status.success:
                 return ProgressDialog(
                   title: "Successfully ${mode.name}ed",
                   onPressed: () {
-                    _controller.getTodos(widget.user.id!);
+                    context.read<TodoCubit>().getTodos(widget.user.id!);
                     Navigator.pop(context);
                   },
                   isProgressed: false,
-                );
-              case ApiState.failure:
-                return RetryDialog(
-                  title: _controller.errorMessage.value,
-                  onRetryPressed: () {
-                    if (mode == Mode.create) {
-                      _controller.createTodo(todo);
-                    } else {
-                      _controller.updateTodo(todo);
-                    }
-                  },
                 );
             }
           },
@@ -164,58 +166,64 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
         return Padding(
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextInput(
-                  initialValue: title,
-                  hint: "Enter title",
-                  onChanged: (String value) {
-                    title = value;
-                  },
-                  validator: (String? input) {
-                    if (input!.length > 3) return null;
-                    return "Title must be at least 4 characters";
-                  },
-                ),
-                const SizedBox(height: 15),
-                DropDown<TodoStatus>(
-                  initialItem: todoStatus,
-                  items: const [TodoStatus.pending, TodoStatus.completed],
-                  onChanged: (TodoStatus value) {
-                    status = value;
-                  },
-                ),
-                const SizedBox(height: 15),
-                DateTimePicker(
-                  dateTime: mode == Mode.update ? currentDateTime : null,
-                  selectedDateTime: (DateTime date) {
-                    dateTime = date;
-                  },
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      bool isValid = formKey.currentState?.validate() ?? false;
-                      if (isValid) {
-                        ToDo todo = ToDo(
-                          id: todoId,
-                          userId: widget.user.id!,
-                          title: title,
-                          dueOn: dateTime,
-                          status: status,
-                        );
-                        createOrUpdateTodo(todo, mode);
-                      }
-                    },
-                    child: Text(mode.name.toCapital),
+          child: SingleChildScrollView(
+            child: Form(
+                key: formKey,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextInput(
+                        initialValue: title,
+                        hint: "Enter title",
+                        onChanged: (String value) {
+                          title = value;
+                        },
+                        validator: (String? input) {
+                          if (input!.length > 3) return null;
+                          return "Title must be at least 4 characters";
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      DropDown<TodoStatus>(
+                        initialItem: todoStatus,
+                        items: const [TodoStatus.pending, TodoStatus.completed],
+                        onChanged: (TodoStatus value) {
+                          status = value;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      DateTimePicker(
+                        dateTime: mode == Mode.update ? currentDateTime : null,
+                        selectedDateTime: (DateTime date) {
+                          dateTime = date;
+                        },
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            bool isValid =
+                                formKey.currentState?.validate() ?? false;
+                            if (isValid) {
+                              ToDo todo = ToDo(
+                                id: todoId,
+                                userId: widget.user.id!,
+                                title: title,
+                                dueOn: dateTime,
+                                status: status,
+                              );
+                              createOrUpdateTodo(todo, mode);
+                            }
+                          },
+                          child: Text(mode.name.toCapital),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ).paddingSymmetric(horizontal: 30, vertical: 30),
+                )),
           ),
         );
       },
@@ -226,31 +234,35 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
     return TodoListItem(
       items: todos,
       onDeletePressed: (ToDo todo) {
-        _controller.deleteTodo(todo);
+        context.read<TodoCubit>().deleteTodo(todo);
         showDialog(
           context: context,
           builder: (_) {
-            return Obx(
-              () {
-                switch (_controller.apiStatus.value) {
-                  case ApiState.loading:
+            return BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
+              builder:
+                  (BuildContext context, GenericCubitState<List<ToDo>> state) {
+                switch (state.status) {
+                  case Status.empty:
+                    return const SizedBox();
+                  case Status.loading:
                     return const ProgressDialog(
                       title: "Deleting task...",
                       isProgressed: true,
                     );
-                  case ApiState.success:
+                  case Status.failure:
+                    return RetryDialog(
+                      title: state.error ?? "Error",
+                      onRetryPressed: () =>
+                          context.read<TodoCubit>().deleteTodo(todo),
+                    );
+                  case Status.success:
                     return ProgressDialog(
                       title: "Successfully deleted",
                       onPressed: () {
-                        _controller.getTodos(widget.user.id!);
+                        context.read<TodoCubit>().getTodos(widget.user.id!);
                         Navigator.pop(context);
                       },
                       isProgressed: false,
-                    );
-                  case ApiState.failure:
-                    return RetryDialog(
-                      title: _controller.errorMessage.value,
-                      onRetryPressed: () => _controller.deleteTodo(todo),
                     );
                 }
               },
@@ -272,26 +284,50 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
   }
 
   @override
+  void initState() {
+    context.read<TodoCubit>().getTodos(widget.user.id!);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context),
       body: SafeArea(
+          child: Padding(
+        padding: const EdgeInsets.all(15.0),
         child: ListView(
           children: [
             header(),
             createTodo(),
-            _controller.obx(
-              (state) => taskList(state!),
-              onLoading: const SpinKitIndicator(),
-              onError: (error) => RetryDialog(
-                title: "$error",
-                onRetryPressed: () => _controller.getTodos(widget.user.id!),
-              ),
-              onEmpty: const EmptyWidget(message: "No Todos"),
-            ),
+            BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
+              buildWhen: (prevState, curState) {
+                return context.read<TodoCubit>().operation ==
+                        ApiOperation.select
+                    ? true
+                    : false;
+              },
+              builder:
+                  (BuildContext context, GenericCubitState<List<ToDo>> state) {
+                switch (state.status) {
+                  case Status.empty:
+                    return const EmptyWidget(message: "No Todos");
+                  case Status.loading:
+                    return const SpinKitIndicator();
+                  case Status.failure:
+                    return RetryDialog(
+                      title: state.error ?? "Error",
+                      onRetryPressed: () =>
+                          context.read<TodoCubit>().getTodos(widget.user.id!),
+                    );
+                  case Status.success:
+                    return taskList(state.data ?? []);
+                }
+              },
+            )
           ],
-        ).paddingAll(15.0),
-      ),
+        ),
+      )),
     );
   }
 }
