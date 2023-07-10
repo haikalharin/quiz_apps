@@ -1,14 +1,13 @@
-import 'package:base_mvvm/viewmodel/post/controller/post_controller.dart';
-import 'package:base_mvvm/common/controller/base_controller.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
 import 'package:base_mvvm/common/dialog/progress_dialog.dart';
 import 'package:base_mvvm/common/dialog/retry_dialog.dart';
 import 'package:base_mvvm/common/widget/text_input.dart';
 import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
+import 'package:base_mvvm/viewmodel/post/cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:base_mvvm/di.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum PostMode { create, update }
 
@@ -26,8 +25,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  final PostController postController = getIt<PostController>();
-
   String postTitle = "";
   String postBody = "";
   int postId = 0;
@@ -35,7 +32,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   void initState() {
-    //  postController = Get.put(PostController());
     initializeValues();
     super.initState();
   }
@@ -99,23 +95,42 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           userId: widget.user.id!);
 
                       if (widget.mode == PostMode.create) {
-                        postController.createPost(post);
+                        context.read<PostCubit>().createPost(post);
                       } else {
-                        postController.updatePost(post);
+                        context.read<PostCubit>().updatePost(post);
                       }
 
                       showDialog(
                         context: context,
                         builder: (_) {
-                          return Obx(
-                            () {
-                              switch (postController.apiStatus.value) {
-                                case ApiState.loading:
+                          return BlocBuilder<PostCubit,
+                              GenericCubitState<List<Post>>>(
+                            builder: (BuildContext context,
+                                GenericCubitState<List<Post>> state) {
+                              switch (state.status) {
+                                case Status.empty:
+                                  return const SizedBox();
+                                case Status.loading:
                                   return ProgressDialog(
                                     title: "${widget.mode.name}ing post...",
                                     isProgressed: true,
                                   );
-                                case ApiState.success:
+                                case Status.failure:
+                                  return RetryDialog(
+                                    title: state.error ?? "Error",
+                                    onRetryPressed: () {
+                                      if (widget.mode == PostMode.create) {
+                                        context
+                                            .read<PostCubit>()
+                                            .createPost(post);
+                                      } else {
+                                        context
+                                            .read<PostCubit>()
+                                            .updatePost(post);
+                                      }
+                                    },
+                                  );
+                                case Status.success:
                                   return ProgressDialog(
                                     title: "Successfully ${widget.mode.name}ed",
                                     onPressed: () {
@@ -126,17 +141,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       }
                                     },
                                     isProgressed: false,
-                                  );
-                                case ApiState.failure:
-                                  return RetryDialog(
-                                    title: postController.errorMessage.value,
-                                    onRetryPressed: () {
-                                      if (widget.mode == PostMode.create) {
-                                        postController.createPost(post);
-                                      } else {
-                                        postController.updatePost(post);
-                                      }
-                                    },
                                   );
                               }
                             },
