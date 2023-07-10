@@ -1,4 +1,5 @@
-import 'package:base_mvvm/common/controller/base_controller.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
 import 'package:base_mvvm/common/dialog/create_dialog.dart';
 import 'package:base_mvvm/common/dialog/delete_dialog.dart';
 import 'package:base_mvvm/common/dialog/progress_dialog.dart';
@@ -9,15 +10,14 @@ import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
 import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/core/app_style.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/di.dart';
 import 'package:base_mvvm/view/post/screen/post_list_screen.dart';
 import 'package:base_mvvm/view/todo/screen/todo_list_screen.dart';
 import 'package:base_mvvm/view/user/widgets/status_container.dart';
-import 'package:base_mvvm/viewmodel/user/controller/user_controller.dart';
+import 'package:base_mvvm/viewmodel/user/cubit/user_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-enum UserOperation { edit, delete, post, todo }
+enum Operation { edit, delete, post, todo }
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({Key? key}) : super(key: key);
@@ -27,12 +27,10 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  final UserController _controller = getIt<UserController>();
-
   PreferredSizeWidget get _appBar {
     return AppBar(
       leading: IconButton(
-        onPressed: _controller.getUserList,
+        onPressed: () => context.read<UserCubit>().getUserList(),
         icon: const Icon(Icons.refresh),
       ),
       actions: [
@@ -40,13 +38,15 @@ class _UserListScreenState extends State<UserListScreen> {
           icon: Icons.filter_list_outlined,
           items: UserStatus.values,
           onChanged: (UserStatus value) {
-            _controller.getUserList(status: value);
+            context.read<UserCubit>().getUserList(status: value);
           },
         ),
         PopupMenu<Gender>(
           icon: Icons.filter_alt_outlined,
           items: Gender.values,
-          onChanged: (Gender value) => _controller.getUserList(gender: value),
+          onChanged: (Gender value) {
+            context.read<UserCubit>().getUserList(gender: value);
+          },
         )
       ],
       title: const Text("Users"),
@@ -63,32 +63,36 @@ class _UserListScreenState extends State<UserListScreen> {
         );
 
         if (isCreate) {
-          _controller.createUser(user);
           if (!mounted) return;
+          context.read<UserCubit>().createUser(user);
           showDialog(
             context: context,
             builder: (_) {
-              return Obx(
-                () {
-                  switch (_controller.apiStatus.value) {
-                    case ApiState.loading:
+              return BlocBuilder<UserCubit, GenericCubitState<List<User>>>(
+                builder: (BuildContext context,
+                    GenericCubitState<List<User>> state) {
+                  switch (state.status) {
+                    case Status.empty:
+                      return const SizedBox();
+                    case Status.loading:
                       return const ProgressDialog(
                         title: "Creating user...",
                         isProgressed: true,
                       );
-                    case ApiState.success:
+                    case Status.failure:
+                      return RetryDialog(
+                        title: state.error ?? "Error",
+                        onRetryPressed: () =>
+                            context.read<UserCubit>().createUser(user),
+                      );
+                    case Status.success:
                       return ProgressDialog(
                         title: "Successfully created",
                         onPressed: () {
-                          _controller.getUserList();
+                          context.read<UserCubit>().getUserList();
                           Navigator.pop(context);
                         },
                         isProgressed: false,
-                      );
-                    case ApiState.failure:
-                      return RetryDialog(
-                        title: _controller.errorMessage.value,
-                        onRetryPressed: () => _controller.createUser(user),
                       );
                   }
                 },
@@ -102,42 +106,45 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget userListItem(User user) {
-    return Card(
-      child: Row(
-        children: [
-          Image.asset(user.gender.name.getGenderWidget, height: 75),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(user.name, style: headLine4),
-                const SizedBox(height: 10),
-                Text(user.email, style: headLine6)
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Card(
+        child: Row(
+          children: [
+            Image.asset(user.gender.name.getGenderWidget, height: 75),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(user.name, style: headLine4),
+                  const SizedBox(height: 10),
+                  Text(user.email, style: headLine6)
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 15),
-          StatusContainer(status: user.status),
-          PopupMenu<UserOperation>(
-            items: UserOperation.values,
-            onChanged: (UserOperation value) async {
-              switch (value) {
-                case UserOperation.post:
-                  navigateTo(PostListScreen(user: user));
-                  break;
-                case UserOperation.todo:
-                  navigateTo(ToDoListScreen(user: user));
-                  break;
-                case UserOperation.delete:
-                  deleteUser(user);
-                  break;
-                case UserOperation.edit:
-                  editUser(user);
-              }
-            },
-          ),
-        ],
+            const SizedBox(width: 15),
+            StatusContainer(status: user.status),
+            PopupMenu<Operation>(
+              items: Operation.values,
+              onChanged: (Operation value) async {
+                switch (value) {
+                  case Operation.post:
+                    navigateTo(PostListScreen(user: user));
+                    break;
+                  case Operation.todo:
+                    navigateTo(ToDoListScreen(user: user));
+                    break;
+                  case Operation.delete:
+                    deleteUser(user);
+                    break;
+                  case Operation.edit:
+                    editUser(user);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -145,32 +152,36 @@ class _UserListScreenState extends State<UserListScreen> {
   void deleteUser(User user) async {
     bool isAccepted = await deleteDialog(context);
     if (isAccepted) {
-      _controller.deleteUser(user);
       if (!mounted) return;
+      context.read<UserCubit>().deleteUser(user);
       showDialog(
         context: context,
         builder: (_) {
-          return Obx(
-            () {
-              switch (_controller.apiStatus.value) {
-                case ApiState.loading:
+          return BlocBuilder<UserCubit, GenericCubitState<List<User>>>(
+            builder:
+                (BuildContext context, GenericCubitState<List<User>> state) {
+              switch (state.status) {
+                case Status.empty:
+                  return const SizedBox();
+                case Status.loading:
                   return const ProgressDialog(
                     title: "Deleting user...",
                     isProgressed: true,
                   );
-                case ApiState.success:
+                case Status.failure:
+                  return RetryDialog(
+                    title: state.error ?? "Error",
+                    onRetryPressed: () =>
+                        context.read<UserCubit>().deleteUser(user),
+                  );
+                case Status.success:
                   return ProgressDialog(
                     title: "Successfully deleted",
                     onPressed: () {
-                      _controller.getUserList();
+                      context.read<UserCubit>().getUserList();
                       Navigator.pop(context);
                     },
                     isProgressed: false,
-                  );
-                case ApiState.failure:
-                  return RetryDialog(
-                    title: _controller.errorMessage.value,
-                    onRetryPressed: () => _controller.deleteUser(user),
                   );
               }
             },
@@ -192,32 +203,36 @@ class _UserListScreenState extends State<UserListScreen> {
     );
 
     if (isUpdate) {
-      _controller.updateUser(userObj);
       if (!mounted) return;
+      context.read<UserCubit>().updateUser(userObj);
       showDialog(
         context: context,
         builder: (_) {
-          return Obx(
-            () {
-              switch (_controller.apiStatus.value) {
-                case ApiState.loading:
+          return BlocBuilder<UserCubit, GenericCubitState<List<User>>>(
+            builder:
+                (BuildContext context, GenericCubitState<List<User>> state) {
+              switch (state.status) {
+                case Status.empty:
+                  return const SizedBox();
+                case Status.loading:
                   return const ProgressDialog(
                     title: "Updating user...",
                     isProgressed: true,
                   );
-                case ApiState.success:
+                case Status.failure:
+                  return RetryDialog(
+                    title: state.error ?? "Error",
+                    onRetryPressed: () =>
+                        context.read<UserCubit>().updateUser(userObj),
+                  );
+                case Status.success:
                   return ProgressDialog(
                     title: "Successfully updated",
                     onPressed: () {
-                      _controller.getUserList();
+                      context.read<UserCubit>().getUserList();
                       Navigator.pop(context);
                     },
                     isProgressed: false,
-                  );
-                case ApiState.failure:
-                  return RetryDialog(
-                    title: _controller.errorMessage.value,
-                    onRetryPressed: () => _controller.updateUser(userObj),
                   );
               }
             },
@@ -239,7 +254,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   void initState() {
-    _controller.getUserList();
+    BlocProvider.of<UserCubit>(context).getUserList();
     super.initState();
   }
 
@@ -248,21 +263,34 @@ class _UserListScreenState extends State<UserListScreen> {
     return Scaffold(
       floatingActionButton: floatingActionButton,
       appBar: _appBar,
-      body: _controller.obx(
-        (state) => ListView.builder(
-          shrinkWrap: true,
-          itemCount: state?.length,
-          itemBuilder: (_, index) {
-            User user = state![index];
-            return userListItem(user).marginSymmetric(horizontal: 10);
-          },
-        ),
-        onLoading: const SpinKitIndicator(type: SpinKitType.circle),
-        onError: (error) => RetryDialog(
-          title: "$error",
-          onRetryPressed: () => _controller.getUserList(),
-        ),
-        onEmpty: const EmptyWidget(message: "No user!"),
+      body: BlocBuilder<UserCubit, GenericCubitState<List<User>>>(
+        buildWhen: (prevState, curState) {
+          return context.read<UserCubit>().operation == ApiOperation.select
+              ? true
+              : false;
+        },
+        builder: (BuildContext context, GenericCubitState<List<User>> state) {
+          switch (state.status) {
+            case Status.empty:
+              return const EmptyWidget(message: "No user!");
+            case Status.loading:
+              return const SpinKitIndicator(type: SpinKitType.circle);
+            case Status.failure:
+              return RetryDialog(
+                title: state.error ?? "Error",
+                onRetryPressed: () => context.read<UserCubit>().getUserList(),
+              );
+            case Status.success:
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: state.data?.length ?? 0,
+                itemBuilder: (_, index) {
+                  User user = state.data![index];
+                  return userListItem(user);
+                },
+              );
+          }
+        },
       ),
     );
   }
