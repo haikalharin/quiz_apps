@@ -1,17 +1,17 @@
+import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
 import 'package:base_mvvm/common/dialog/retry_dialog.dart';
 import 'package:base_mvvm/common/widget/empty_widget.dart';
 import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
 import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/core/app_style.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
+import 'package:base_mvvm/data/model/user/user.dart';
 import 'package:base_mvvm/view/post/screen/create_post_screen.dart';
-import 'package:base_mvvm/view/post/screen/post_detail_screen.dart';
-import 'package:base_mvvm/viewmodel/post/controller/post_controller.dart';
+import 'package:base_mvvm/viewmodel/post/cubit/post_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../../../data/model/user/user.dart';
-import '../../../di.dart';
+import 'post_detail_screen.dart';
 
 class PostListScreen extends StatefulWidget {
   const PostListScreen({Key? key, required this.user}) : super(key: key);
@@ -23,17 +23,15 @@ class PostListScreen extends StatefulWidget {
 }
 
 class _PostListScreenState extends State<PostListScreen> {
-  final PostController postController = getIt<PostController>();
-
   @override
   void initState() {
-    // postController = Get.put(PostController());
     getData();
     super.initState();
   }
 
   getData() async {
-    await postController.getPosts(widget.user);
+    if (!mounted) return;
+    context.read<PostCubit>().getPosts(widget.user);
   }
 
   PreferredSizeWidget get appBar {
@@ -65,7 +63,7 @@ class _PostListScreenState extends State<PostListScreen> {
           ),
         );
         if (resultFromCreatePostScreen != null && resultFromCreatePostScreen) {
-          postController.getPosts(widget.user);
+          getData();
         }
       },
     );
@@ -83,12 +81,13 @@ class _PostListScreenState extends State<PostListScreen> {
               children: [
                 Text(widget.user.name, maxLines: 2, style: headLine4),
                 const SizedBox(height: 5),
-                Obx(
-                  () {
+                Builder(
+                  builder: (context) {
+                    final postCubit = context.watch<PostCubit>();
                     return Text(
-                      "Posts :${postController.postLength}",
+                      postCubit.getPostCount,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w500, color: Colors.black54),
+                          color: Colors.black54, fontWeight: FontWeight.w500),
                     );
                   },
                 )
@@ -122,7 +121,7 @@ class _PostListScreenState extends State<PostListScreen> {
 
                 if (resultFromPostDetailScreen != null &&
                     resultFromPostDetailScreen) {
-                  postController.getPosts(widget.user);
+                  getData();
                 }
               },
               child: Card(
@@ -174,14 +173,23 @@ class _PostListScreenState extends State<PostListScreen> {
             padding: EdgeInsets.only(left: 20, top: 15),
             child: Text("Posts", style: headLine1),
           ),
-          postController.obx(
-            (state) => userPostItem(state!),
-            onLoading: const Center(child: SpinKitIndicator()),
-            onError: (error) => RetryDialog(
-              title: "$error",
-              onRetryPressed: () => postController.getPosts(widget.user),
-            ),
-            onEmpty: const EmptyWidget(message: "No post"),
+          BlocBuilder<PostCubit, GenericCubitState<List<Post>>>(
+            builder:
+                (BuildContext context, GenericCubitState<List<Post>> state) {
+              switch (state.status) {
+                case Status.empty:
+                  return const EmptyWidget(message: "No post");
+                case Status.loading:
+                  return const Center(child: SpinKitIndicator());
+                case Status.failure:
+                  return RetryDialog(
+                    title: state.error ?? "Error",
+                    onRetryPressed: () => getData(),
+                  );
+                case Status.success:
+                  return userPostItem(state.data ?? []);
+              }
+            },
           ),
         ],
       ),

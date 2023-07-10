@@ -1,22 +1,22 @@
-import 'package:base_mvvm/common/controller/base_controller.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit.dart';
+import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
+import 'package:base_mvvm/common/dialog/progress_dialog.dart';
 import 'package:base_mvvm/common/dialog/retry_dialog.dart';
 import 'package:base_mvvm/common/widget/empty_widget.dart';
 import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
 import 'package:base_mvvm/common/widget/text_input.dart';
 import 'package:base_mvvm/core/app_asset.dart';
+import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/core/app_style.dart';
-import 'package:base_mvvm/data/model/comment/comment.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/di.dart';
 import 'package:base_mvvm/view/post/screen/create_post_screen.dart';
-import 'package:base_mvvm/viewmodel/comment/controller/comment_controller.dart';
-import 'package:base_mvvm/viewmodel/post/controller/post_controller.dart';
+import 'package:base_mvvm/viewmodel/comment/cubit/comment_cubit.dart';
+import 'package:base_mvvm/viewmodel/post/cubit/post_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../../../common/dialog/progress_dialog.dart';
-import '../../../core/app_extension.dart';
+import '../../../data/model/comment/comment.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({Key? key, required this.post, this.user})
@@ -30,23 +30,23 @@ class PostDetailScreen extends StatefulWidget {
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
-  final CommentController commentController = getIt<CommentController>();
-  final PostController postController = getIt<PostController>();
-  FocusNode userNameFocusNode = FocusNode();
-  FocusNode commentBodyFocusNode = FocusNode();
-
   final formKey = GlobalKey<FormState>();
   TextEditingController nameEditingController = TextEditingController();
   TextEditingController commentBodyEditingController = TextEditingController();
+  FocusNode userNameFocusNode = FocusNode();
+  FocusNode commentBodyFocusNode = FocusNode();
 
   @override
-  void initState() {
-    getData();
-    super.initState();
+  void dispose() {
+    nameEditingController.dispose();
+    commentBodyEditingController.dispose();
+    userNameFocusNode.dispose();
+    commentBodyFocusNode.dispose();
+    super.dispose();
   }
 
-  getData() async {
-    await commentController.getUserComments(widget.post.id);
+  getUserComments() async {
+    await context.read<CommentCubit>().getUserComments(widget.post.id);
   }
 
   PreferredSizeWidget _appBar(BuildContext context) {
@@ -104,85 +104,101 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget get commentItem {
-    return commentController.obx(
-      (state) => ListView.builder(
-        shrinkWrap: true,
-        itemCount: state?.length,
-        itemBuilder: (_, index) {
-          Comment comment = state![index];
-          return Row(
-            children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundColor: Color(0xFFcad1e2),
-                backgroundImage: AssetImage(AppAsset.user),
-              ),
-              Expanded(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(comment.name, style: headLine5),
-                            IconButton(
-                              splashRadius: 25,
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () => deleteComment(comment),
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.redAccent,
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(comment.body)
-                      ],
+    getUserComments();
+    return BlocBuilder<CommentCubit, GenericCubitState<List<Comment>>>(
+      buildWhen: (prevState, curState) {
+        return context.read<CommentCubit>().operation == ApiOperation.select
+            ? true
+            : false;
+      },
+      builder: (BuildContext context, GenericCubitState<List<Comment>> state) {
+        switch (state.status) {
+          case Status.empty:
+            return const EmptyWidget(message: "No comment");
+          case Status.loading:
+            return const SpinKitIndicator();
+          case Status.failure:
+            return RetryDialog(
+                title: state.error ?? "Error",
+                onRetryPressed: () => getUserComments());
+          case Status.success:
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: state.data?.length ?? 0,
+              itemBuilder: (_, index) {
+                Comment comment = state.data![index];
+                return Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Color(0xFFcad1e2),
+                      backgroundImage: AssetImage(AppAsset.user),
                     ),
-                  ),
-                ),
-              )
-            ],
-          );
-        },
-      ),
-      onLoading: const SpinKitIndicator(),
-      onEmpty: const EmptyWidget(message: "No comment"),
-      onError: (error) => RetryDialog(
-        title: "$error",
-        onRetryPressed: () => commentController.getUserComments(widget.post.id),
-      ),
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(comment.name, style: headLine5),
+                                  IconButton(
+                                    splashRadius: 25,
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () => deleteComment(comment),
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      color: Colors.redAccent,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(comment.body)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
+            );
+        }
+      },
     );
   }
 
   void deletePost(Post post) {
-    postController.deletePost(post);
+    context.read<PostCubit>().deletePost(post);
     showDialog(
       context: context,
       builder: (_) {
-        return Obx(
-          () {
-            switch (postController.apiStatus.value) {
-              case ApiState.loading:
+        return BlocBuilder<PostCubit, GenericCubitState<List<Post>>>(
+          builder: (BuildContext context, GenericCubitState<List<Post>> state) {
+            switch (state.status) {
+              case Status.empty:
+                return const SizedBox();
+              case Status.loading:
                 return const ProgressDialog(
                   title: "Deleting post...",
                   isProgressed: true,
                 );
-              case ApiState.success:
+              case Status.failure:
+                return RetryDialog(
+                    title: state.error ?? "Error",
+                    onRetryPressed: () =>
+                        context.read<PostCubit>().deletePost(post));
+              case Status.success:
                 return ProgressDialog(
                   title: "Successfully deleted",
                   onPressed: () => pop(context, 2),
                   isProgressed: false,
-                );
-              case ApiState.failure:
-                return RetryDialog(
-                  title: postController.errorMessage.value,
-                  onRetryPressed: () => postController.deletePost(post),
                 );
             }
           },
@@ -210,35 +226,36 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   void deleteComment(Comment comment) {
-    commentController.deleteComment(comment);
+    context.read<CommentCubit>().deleteComment(comment);
     showDialog(
       context: context,
       builder: (_) {
-        return Obx(
-          () {
-            switch (commentController.apiStatus.value) {
-              case ApiState.loading:
+        return BlocBuilder<CommentCubit, GenericCubitState<List<Comment>>>(
+          builder:
+              (BuildContext context, GenericCubitState<List<Comment>> state) {
+            switch (state.status) {
+              case Status.empty:
+                return const SizedBox();
+              case Status.loading:
                 return const ProgressDialog(
                   title: "Deleting comment...",
                   isProgressed: true,
                 );
-              case ApiState.success:
+              case Status.failure:
+                return RetryDialog(
+                    title: state.error ?? "Error",
+                    onRetryPressed: () =>
+                        context.read<CommentCubit>().deleteComment(comment));
+              case Status.success:
                 WidgetsBinding.instance.addPostFrameCallback(
-                  (_) {
-                    commentController.getUserComments(widget.post.id);
+                      (_) {
+                    getUserComments();
                     Navigator.pop(context);
                     snackBar("Successfully deleted");
                   },
                 );
-                break;
-              case ApiState.failure:
-                return RetryDialog(
-                  title: commentController.errorMessage.value,
-                  onRetryPressed: () =>
-                      commentController.deleteComment(comment),
-                );
+                return const SizedBox();
             }
-            return const SizedBox();
           },
         );
       },
@@ -265,10 +282,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 TextInput(
-                  hint: "Write a comment",
                   focusNode: userNameFocusNode,
+                  hint: "Write a comment",
                   maxLine: 3,
-                  autovalidateMode: AutovalidateMode.disabled,
+                  autoValidateMode: AutovalidateMode.disabled,
                   controller: commentBodyEditingController,
                   validator: (String? value) {
                     if (value!.isNotEmpty) return null;
@@ -280,10 +297,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextInput(
-                  icon: const Icon(Icons.person, color: Color(0xFF556080)),
                   focusNode: commentBodyFocusNode,
+                  icon: const Icon(Icons.person, color: Color(0xFF556080)),
                   hint: "Name",
-                  autovalidateMode: AutovalidateMode.disabled,
+                  autoValidateMode: AutovalidateMode.disabled,
                   controller: nameEditingController,
                   validator: (String? value) {
                     if (value!.isNotEmpty) return null;
@@ -307,36 +324,40 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         body: commentBody,
                       );
 
-                      commentController.createComment(comment);
-
+                      context.read<CommentCubit>().createComment(comment);
                       showDialog(
                         context: context,
                         builder: (_) {
-                          return Obx(
-                            () {
-                              switch (commentController.apiStatus.value) {
-                                case ApiState.loading:
+                          return BlocBuilder<CommentCubit,
+                              GenericCubitState<List<Comment>>>(
+                            builder: (BuildContext context,
+                                GenericCubitState<List<Comment>> state) {
+                              switch (state.status) {
+                                case Status.empty:
+                                  return const EmptyWidget(
+                                      message: "No comment");
+                                case Status.loading:
                                   return const ProgressDialog(
                                     title: "",
                                     isProgressed: true,
                                   );
-                                case ApiState.success:
+                                case Status.failure:
+                                  return RetryDialog(
+                                    title: state.error ?? "Error",
+                                    onRetryPressed: () {
+                                      context
+                                          .read<CommentCubit>()
+                                          .createComment(comment);
+                                    },
+                                  );
+                                case Status.success:
                                   WidgetsBinding.instance.addPostFrameCallback(
-                                    (_) {
+                                        (_) {
                                       nameEditingController.clear();
                                       commentBodyEditingController.clear();
                                       snackBar("Successfully created");
                                       Navigator.pop(context);
-                                      commentController
-                                          .getUserComments(widget.post.id);
-                                    },
-                                  );
-                                  break;
-                                case ApiState.failure:
-                                  return RetryDialog(
-                                    title: commentController.errorMessage.value,
-                                    onRetryPressed: () {
-                                      commentController.createComment(comment);
+                                      getUserComments();
                                     },
                                   );
                               }
@@ -358,15 +379,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         )
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    nameEditingController.dispose();
-    commentBodyEditingController.dispose();
-    userNameFocusNode.dispose();
-    commentBodyFocusNode.dispose();
-    super.dispose();
   }
 
   @override
