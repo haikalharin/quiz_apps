@@ -1,27 +1,27 @@
+import 'package:base_mvvm/common/network/api_result.dart';
 import 'package:base_mvvm/common/network/dio_exception.dart';
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
 mixin RepositoryHelper<T> {
-  Future<Either<String, List<T>>> checkItemsFailOrSuccess(
+  Future<ApiResult<List<T>>> checkItemsFailOrSuccess(
       Future<List<T>> apiCallback) async {
     try {
       final List<T> items = await apiCallback;
-      return Right(items);
+      return ApiResult.success(items);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
-      return Left(errorMessage);
+      return ApiResult.failure(errorMessage);
     }
   }
 
-  Future<Either<String, bool>> checkItemFailOrSuccess(
+  Future<ApiResult<bool>> checkItemFailOrSuccess(
       Future<bool> apiCallback) async {
     try {
       await apiCallback;
-      return const Right(true);
+      return const ApiResult.success(true);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
-      return Left(errorMessage);
+      return ApiResult.failure(errorMessage);
     }
   }
 }
