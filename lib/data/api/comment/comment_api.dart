@@ -1,7 +1,7 @@
 import 'package:base_mvvm/common/network/api_helper.dart';
 import 'package:base_mvvm/common/network/dio_client.dart';
 import 'package:base_mvvm/data/model/comment/comment.dart';
-import 'package:base_mvvm/core/api_config.dart';
+import 'package:base_mvvm/common/network/api_config.dart';
 
 class CommentApi with ApiHelper<Comment> {
   final DioClient dioClient;

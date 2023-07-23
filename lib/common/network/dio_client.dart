@@ -1,5 +1,5 @@
 import 'package:base_mvvm/common/network/dio_interceptor.dart';
-import 'package:base_mvvm/core/api_config.dart';
+import 'package:base_mvvm/common/network/api_config.dart';
 import 'package:dio/dio.dart' show Dio, ResponseType;
 
 
