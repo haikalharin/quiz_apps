@@ -1,21 +1,22 @@
-import 'package:base_mvvm/common/cubit/generic_cubit.dart';
-import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
+import 'package:base_mvvm/common/bloc/bloc_helper.dart';
 import 'package:base_mvvm/common/dialog/progress_dialog.dart';
-import 'package:base_mvvm/common/dialog/retry_dialog.dart';
 import 'package:base_mvvm/common/widget/date_time_picker.dart';
 import 'package:base_mvvm/common/widget/drop_down.dart';
-import 'package:base_mvvm/common/widget/empty_widget.dart';
 import 'package:base_mvvm/common/widget/popup_menu.dart';
 import 'package:base_mvvm/common/widget/spinkit_indicator.dart';
+import 'package:base_mvvm/view/todo/widget/todo_list_item.dart';
+import 'package:base_mvvm/viewmodel/todo/bloc/todo_bloc.dart';
+import 'package:base_mvvm/viewmodel/todo/bloc/todo_event.dart';
+import 'package:base_mvvm/common/bloc/generic_bloc_state.dart';
+import 'package:base_mvvm/common/dialog/retry_dialog.dart';
+import 'package:base_mvvm/common/widget/empty_widget.dart';
 import 'package:base_mvvm/common/widget/text_input.dart';
 import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/core/app_style.dart';
 import 'package:base_mvvm/data/model/todo/todo.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/view/todo/widget/todo_list_item.dart';
-import 'package:base_mvvm/viewmodel/todo/cubit/todo_cubit.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
 enum Mode { create, update }
 
@@ -50,11 +51,11 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
           const Icon(Icons.archive_outlined, color: Color(0xFFF4511E)),
           Builder(
             builder: (context) {
-              final todoCubit = context.watch<TodoCubit>();
+              final todoBloc = context.watch<TodoBloc>();
               return Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  todoCubit.getTodoCount,
+                  todoBloc.getTodoCount,
                   style: const TextStyle(
                       color: Colors.black54, fontWeight: FontWeight.bold),
                 ),
@@ -66,8 +67,8 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
             items: TodoStatus.values,
             onChanged: (TodoStatus status) {
               context
-                  .read<TodoCubit>()
-                  .getTodos(widget.user.id!, status: status);
+                  .read<TodoBloc>()
+                  .add(TodoFetched(widget.user.id!, status: status));
             },
           )
         ],
@@ -100,17 +101,17 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
 
   createOrUpdateTodo(ToDo todo, Mode mode) {
     if (mode == Mode.create) {
-      context.read<TodoCubit>().createTodo(todo);
+      context.read<TodoBloc>().add(TodoCreated(todo));
     } else {
-      context.read<TodoCubit>().updateTodo(todo);
+      context.read<TodoBloc>().add(TodoUpdated(todo));
     }
     Navigator.pop(context);
 
     showDialog(
       context: context,
       builder: (_) {
-        return BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
-          builder: (BuildContext context, GenericCubitState<List<ToDo>> state) {
+        return BlocBuilder<TodoBloc, GenericBlocState<ToDo>>(
+          builder: (BuildContext context, GenericBlocState<ToDo> state) {
             switch (state.status) {
               case Status.empty:
                 return const SizedBox();
@@ -124,9 +125,9 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                   title: state.error ?? "Error",
                   onRetryPressed: () {
                     if (mode == Mode.create) {
-                      context.read<TodoCubit>().createTodo(todo);
+                      context.read<TodoBloc>().add(TodoCreated(todo));
                     } else {
-                      context.read<TodoCubit>().updateTodo(todo);
+                      context.read<TodoBloc>().add(TodoUpdated(todo));
                     }
                   },
                 );
@@ -134,7 +135,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                 return ProgressDialog(
                   title: "Successfully ${mode.name}ed",
                   onPressed: () {
-                    context.read<TodoCubit>().getTodos(widget.user.id!);
+                    context.read<TodoBloc>().add(TodoFetched(widget.user.id!));
                     Navigator.pop(context);
                   },
                   isProgressed: false,
@@ -234,13 +235,12 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
     return TodoListItem(
       items: todos,
       onDeletePressed: (ToDo todo) {
-        context.read<TodoCubit>().deleteTodo(todo);
+        context.read<TodoBloc>().add(TodoDeleted(todo));
         showDialog(
           context: context,
           builder: (_) {
-            return BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
-              builder:
-                  (BuildContext context, GenericCubitState<List<ToDo>> state) {
+            return BlocBuilder<TodoBloc, GenericBlocState<ToDo>>(
+              builder: (BuildContext context, GenericBlocState<ToDo> state) {
                 switch (state.status) {
                   case Status.empty:
                     return const SizedBox();
@@ -253,13 +253,15 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                     return RetryDialog(
                       title: state.error ?? "Error",
                       onRetryPressed: () =>
-                          context.read<TodoCubit>().deleteTodo(todo),
+                          context.read<TodoBloc>().add(TodoDeleted(todo)),
                     );
                   case Status.success:
                     return ProgressDialog(
                       title: "Successfully deleted",
                       onPressed: () {
-                        context.read<TodoCubit>().getTodos(widget.user.id!);
+                        context
+                            .read<TodoBloc>()
+                            .add(TodoFetched(widget.user.id!));
                         Navigator.pop(context);
                       },
                       isProgressed: false,
@@ -285,7 +287,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
 
   @override
   void initState() {
-    context.read<TodoCubit>().getTodos(widget.user.id!);
+    context.read<TodoBloc>().add(TodoFetched(widget.user.id!));
     super.initState();
   }
 
@@ -300,15 +302,13 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
           children: [
             header(),
             createTodo(),
-            BlocBuilder<TodoCubit, GenericCubitState<List<ToDo>>>(
+            BlocBuilder<TodoBloc, GenericBlocState<ToDo>>(
               buildWhen: (prevState, curState) {
-                return context.read<TodoCubit>().operation ==
-                        ApiOperation.select
+                return context.read<TodoBloc>().operation == ApiOperation.select
                     ? true
                     : false;
               },
-              builder:
-                  (BuildContext context, GenericCubitState<List<ToDo>> state) {
+              builder: (BuildContext context, GenericBlocState<ToDo> state) {
                 switch (state.status) {
                   case Status.empty:
                     return const EmptyWidget(message: "No Todos");
@@ -317,8 +317,9 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                   case Status.failure:
                     return RetryDialog(
                       title: state.error ?? "Error",
-                      onRetryPressed: () =>
-                          context.read<TodoCubit>().getTodos(widget.user.id!),
+                      onRetryPressed: () => context
+                          .read<TodoBloc>()
+                          .add(TodoFetched(widget.user.id!)),
                     );
                   case Status.success:
                     return taskList(state.data ?? []);
