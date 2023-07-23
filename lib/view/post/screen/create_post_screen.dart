@@ -1,13 +1,14 @@
-import 'package:base_mvvm/common/cubit/generic_cubit_state.dart';
+import 'package:base_mvvm/common/bloc/generic_bloc_state.dart';
 import 'package:base_mvvm/common/dialog/progress_dialog.dart';
 import 'package:base_mvvm/common/dialog/retry_dialog.dart';
 import 'package:base_mvvm/common/widget/text_input.dart';
 import 'package:base_mvvm/core/app_extension.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/viewmodel/post/cubit/post_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
+import 'package:base_mvvm/viewmodel/post/bloc/post_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
 enum PostMode { create, update }
 
@@ -95,18 +96,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           userId: widget.user.id!);
 
                       if (widget.mode == PostMode.create) {
-                        context.read<PostCubit>().createPost(post);
+                        context.read<PostBloc>().add(PostCreated(post));
                       } else {
-                        context.read<PostCubit>().updatePost(post);
+                        context.read<PostBloc>().add(PostUpdated(post));
                       }
 
                       showDialog(
                         context: context,
                         builder: (_) {
-                          return BlocBuilder<PostCubit,
-                              GenericCubitState<List<Post>>>(
+                          return BlocBuilder<PostBloc, GenericBlocState<Post>>(
                             builder: (BuildContext context,
-                                GenericCubitState<List<Post>> state) {
+                                GenericBlocState<Post> state) {
                               switch (state.status) {
                                 case Status.empty:
                                   return const SizedBox();
@@ -121,12 +121,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     onRetryPressed: () {
                                       if (widget.mode == PostMode.create) {
                                         context
-                                            .read<PostCubit>()
-                                            .createPost(post);
+                                            .read<PostBloc>()
+                                            .add(PostCreated(post));
                                       } else {
                                         context
-                                            .read<PostCubit>()
-                                            .updatePost(post);
+                                            .read<PostBloc>()
+                                            .add(PostUpdated(post));
                                       }
                                     },
                                   );
