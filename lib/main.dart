@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:base_mvvm/core/app_theme.dart';
+import 'package:base_mvvm/environment_config.dart';
 import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
 import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
 import 'package:base_mvvm/viewmodel/todo/bloc/todo_bloc.dart';
@@ -10,8 +13,15 @@ import 'di.dart';
 import 'view/user/screen/user_list_screen.dart';
 
 void main() async {
-  await init();
-  runApp(const MyApp());
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await init();
+    print(EnvironmentConfig.envName);
+    runApp(const MyApp());
+  }, (error, stack) async {
+    // await Sentry.captureException(error, stackTrace: stack);
+    // await FirebaseCrashlytics.instance.recordError(error, stack);
+  });
 }
 
 class MyApp extends StatelessWidget {

@@ -1,0 +1,38 @@
+{
+    "configurations": [{
+            "name": "Production",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "prod", 
+                "--dart-define=BASE_ENV_NAME=prod",
+            ]
+        },
+        {
+            "name": "Staging",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "staging",
+                "--dart-define=BASE_ENV_NAME=staging",
+            ]
+        },
+        {
+            "name": "Dev",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define=BASE_ENV_NAME=dev",
+            ]
+        }
+    ],
+    "dart.flutterSdkPath": "yourpathsdk/flutter",
+    "dart.sdkPath": "yourpathsdk/flutter/bin/dart",
+}
