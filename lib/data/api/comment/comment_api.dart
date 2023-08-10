@@ -1,7 +1,7 @@
-import 'package:base_mvvm/common/network/api_helper.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
+import 'package:base_mvvm/core/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_helper.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/model/comment/comment.dart';
-import 'package:base_mvvm/common/network/api_config.dart';
 
 class CommentApi with ApiHelper<Comment> {
   final DioClient dioClient;
@@ -19,8 +19,6 @@ class CommentApi with ApiHelper<Comment> {
   Future<List<Comment>> getComments(int postId) async {
     final queryParameters = {'post_id': "$postId"};
 
-    return await makeGetRequest(
-        dioClient.dio.get(ApiConfig.comments, queryParameters: queryParameters),
-        Comment.fromJson);
+    return await makeGetRequest(dioClient.dio.get(ApiConfig.comments, queryParameters: queryParameters), Comment.fromJson);
   }
 }

@@ -1,5 +1,5 @@
-import 'package:base_mvvm/common/network/api_result.dart';
-import 'package:base_mvvm/common/repository/repository_helper.dart';
+import 'package:base_mvvm/core/network/api_result.dart';
+import 'package:base_mvvm/core/repository/repository_helper.dart';
 import 'package:base_mvvm/data/api/comment/comment_api.dart';
 import 'package:base_mvvm/data/model/comment/comment.dart';
 

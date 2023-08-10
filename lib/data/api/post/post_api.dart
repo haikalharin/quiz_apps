@@ -1,6 +1,6 @@
-import 'package:base_mvvm/common/network/api_helper.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
-import 'package:base_mvvm/common/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_helper.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
 
@@ -10,25 +10,20 @@ class PostApi with ApiHelper<Post> {
   PostApi({required this.dioClient});
 
   Future<bool> createPost(Post post) async {
-    return await makePostRequest(
-        dioClient.dio.post(ApiConfig.posts, data: post));
+    return await makePostRequest(dioClient.dio.post(ApiConfig.posts, data: post));
   }
 
   Future<bool> updatePost(Post post) async {
-    return await makePutRequest(
-        dioClient.dio.put("${ApiConfig.posts}/${post.id}", data: post));
+    return await makePutRequest(dioClient.dio.put("${ApiConfig.posts}/${post.id}", data: post));
   }
 
   Future<bool> deletePost(Post post) async {
-    return await makeDeleteRequest(
-        dioClient.dio.delete("${ApiConfig.posts}/${post.id}"));
+    return await makeDeleteRequest(dioClient.dio.delete("${ApiConfig.posts}/${post.id}"));
   }
 
   Future<List<Post>> getUsers(User user) async {
     final queryParameters = {'user_id': "${user.id}"};
 
-    return await makeGetRequest(
-        dioClient.dio.get(ApiConfig.posts, queryParameters: queryParameters),
-        Post.fromJson);
+    return await makeGetRequest(dioClient.dio.get(ApiConfig.posts, queryParameters: queryParameters), Post.fromJson);
   }
 }

@@ -1,16 +1,15 @@
-import 'package:base_mvvm/repository/comment/comment_repository.dart';
-import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
-import 'package:base_mvvm/repository/post/post_repository.dart';
-import 'package:base_mvvm/repository/todo/todo_repository.dart';
-import 'package:base_mvvm/repository/user/user_repository.dart';
-import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
-import 'package:base_mvvm/viewmodel/todo/bloc/todo_bloc.dart';
-import 'package:base_mvvm/viewmodel/user/bloc/user_bloc.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/api/comment/comment_api.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
 import 'package:base_mvvm/data/api/post/post_api.dart';
 import 'package:base_mvvm/data/api/todo/todo_api.dart';
 import 'package:base_mvvm/data/api/user/user_api.dart';
+import 'package:base_mvvm/repository/comment/comment_repository.dart';
+import 'package:base_mvvm/repository/post/post_repository.dart';
+import 'package:base_mvvm/repository/todo/todo_repository.dart';
+import 'package:base_mvvm/repository/user/user_repository.dart';
+import 'package:base_mvvm/screens/todo/bloc/todo_bloc.dart';
+import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
+import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -22,42 +21,35 @@ Future<void> init() async {
   getIt.registerLazySingleton<DioClient>(() => DioClient(getIt<Dio>()));
 
   // User api
-  getIt.registerLazySingleton<UserApi>(
-          () => UserApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApi>(() => UserApi(dioClient: getIt<DioClient>()));
 
   // _Todo api
-  getIt.registerLazySingleton<ToDoApi>(
-          () => ToDoApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<ToDoApi>(() => ToDoApi(dioClient: getIt<DioClient>()));
 
   // Post api
-  getIt.registerLazySingleton<PostApi>(
-          () => PostApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<PostApi>(() => PostApi(dioClient: getIt<DioClient>()));
 
   // Comment api
-  getIt.registerLazySingleton<CommentApi>(
-          () => CommentApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<CommentApi>(() => CommentApi(dioClient: getIt<DioClient>()));
 
   // User repository
   getIt.registerLazySingleton<UserRepository>(
-        () => UserRepository(userApi: getIt<UserApi>()),
+    () => UserRepository(userApi: getIt<UserApi>()),
   );
 
 // _Todo repository
   getIt.registerLazySingleton<TodoRepository>(
-        () => TodoRepository(todoApi: getIt<ToDoApi>()),
+    () => TodoRepository(todoApi: getIt<ToDoApi>()),
   );
 
   // Post repository
   getIt.registerLazySingleton<PostRepository>(
-        () => PostRepository(postApi: getIt<PostApi>()),
+    () => PostRepository(postApi: getIt<PostApi>()),
   );
   // Comment repository
   getIt.registerLazySingleton<CommentRepository>(
-        () => CommentRepository(commentApi: getIt<CommentApi>()),
+    () => CommentRepository(commentApi: getIt<CommentApi>()),
   );
-
-  //User Bloc
-  getIt.registerFactory(() => UserBloc(userRepository: getIt<UserRepository>()));
 
   //_Todo Bloc
   getIt.registerFactory(() => TodoBloc(todoRepository: getIt<TodoRepository>()));

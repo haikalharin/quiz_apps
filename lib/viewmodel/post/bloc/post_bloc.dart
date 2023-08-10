@@ -1,8 +1,8 @@
-import 'package:base_mvvm/common/bloc/generic_bloc_state.dart';
+import 'package:base_mvvm/core/bloc/bloc_helper.dart';
+import 'package:base_mvvm/core/bloc/generic_bloc_state.dart';
 import 'package:base_mvvm/data/model/post/post.dart';
 import 'package:base_mvvm/repository/post/post_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:base_mvvm/common/bloc/bloc_helper.dart';
 
 import 'post_event.dart';
 

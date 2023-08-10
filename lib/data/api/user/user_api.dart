@@ -1,7 +1,7 @@
-import 'package:base_mvvm/common/network/api_helper.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
+import 'package:base_mvvm/core/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_helper.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/common/network/api_config.dart';
 
 class UserApi with ApiHelper<User> {
   final DioClient dioClient;
@@ -31,8 +31,6 @@ class UserApi with ApiHelper<User> {
       queryParameters.addAll({'status': status.name});
     }
 
-    return await makeGetRequest(
-        dioClient.dio.get(ApiConfig.users, queryParameters: queryParameters),
-        User.fromJson);
+    return await makeGetRequest(dioClient.dio.get(ApiConfig.users, queryParameters: queryParameters), User.fromJson);
   }
 }

@@ -1,5 +1,5 @@
-import 'package:base_mvvm/common/network/api_result.dart';
-import 'package:base_mvvm/common/repository/repository_helper.dart';
+import 'package:base_mvvm/core/network/api_result.dart';
+import 'package:base_mvvm/core/repository/repository_helper.dart';
 import 'package:base_mvvm/data/api/user/user_api.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
 
@@ -8,10 +8,8 @@ class UserRepository with RepositoryHelper<User> {
 
   UserRepository({required this.userApi});
 
-  Future<ApiResult<List<User>>> getUsers(
-      {Gender? gender, UserStatus? status}) async {
-    return checkItemsFailOrSuccess(
-        userApi.getUsers(gender: gender, status: status));
+  Future<ApiResult<List<User>>> getUsers({Gender? gender, UserStatus? status}) async {
+    return checkItemsFailOrSuccess(userApi.getUsers(gender: gender, status: status));
   }
 
   Future<ApiResult<bool>> createUser(User user) async {

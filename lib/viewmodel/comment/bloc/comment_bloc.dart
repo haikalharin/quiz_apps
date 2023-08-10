@@ -1,5 +1,5 @@
-import 'package:base_mvvm/common/bloc/bloc_helper.dart';
-import 'package:base_mvvm/common/bloc/generic_bloc_state.dart';
+import 'package:base_mvvm/core/bloc/bloc_helper.dart';
+import 'package:base_mvvm/core/bloc/generic_bloc_state.dart';
 import 'package:base_mvvm/data/model/comment/comment.dart';
 import 'package:base_mvvm/repository/comment/comment_repository.dart';
 import 'package:base_mvvm/viewmodel/comment/bloc/comment_event.dart';
@@ -7,10 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 typedef Emit = Emitter<GenericBlocState<Comment>>;
 
-class CommentBloc extends Bloc<CommentEvent, GenericBlocState<Comment>>
-    with BlocHelper<Comment> {
-  CommentBloc({required this.commentRepository})
-      : super(GenericBlocState.loading()) {
+class CommentBloc extends Bloc<CommentEvent, GenericBlocState<Comment>> with BlocHelper<Comment> {
+  CommentBloc({required this.commentRepository}) : super(GenericBlocState.loading()) {
     on<CommentFetched>(getComments);
     on<CommentCreated>(createComment);
     on<CommentDeleted>(deleteComment);
