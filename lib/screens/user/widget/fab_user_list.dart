@@ -1,5 +1,5 @@
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/screens/user/widget/create_dialog.dart';
+import 'package:base_mvvm/screens/user/components/create_dialog.dart';
 import 'package:flutter/material.dart';
 
 class FabUserList extends StatelessWidget {

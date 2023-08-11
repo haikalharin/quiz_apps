@@ -14,7 +14,6 @@ class UserListViewModel extends Bloc<UserEvent, UserListBloc> {
   }
 
   Future<void> getUserList(UsersFetched event, Emitter<UserListBloc> emit) async {
-    print('REFETCH');
     emit(UserListBloc.loading(
       data: state.data,
       status: state.status,
@@ -25,14 +24,12 @@ class UserListViewModel extends Bloc<UserEvent, UserListBloc> {
     final result = await userRepository.getUsers(status: status, gender: gender);
     result.when(
         success: (data) {
-          print("SUKSES");
           final state = UserListBloc.loaded(
             data: data,
             status: status,
             gender: gender,
           );
           emit(state);
-          print(state);
         },
         failure: (error) {});
   }

@@ -37,56 +37,6 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  // Widget get floatingActionButton {
-  //   return FloatingActionButton(
-  //     onPressed: () async {
-  //       late User user;
-  //       bool isCreate = await createDialog(
-  //         context: context,
-  //         userData: (User userValue) => user = userValue,
-  //       );
-
-  //       if (isCreate) {
-  //         if (!mounted) return;
-  //         context.read<UserBloc>().add(UserCreated(user));
-  //         showDialog(
-  //           context: context,
-  //           builder: (_) {
-  //             return BlocBuilder<UserBloc, GenericBlocState<User>>(
-  //               builder: (BuildContext context, GenericBlocState<User> state) {
-  //                 switch (state.status) {
-  //                   case Status.empty:
-  //                     return const SizedBox();
-  //                   case Status.loading:
-  //                     return const ProgressDialog(
-  //                       title: "Creating user...",
-  //                       isProgressed: true,
-  //                     );
-  //                   case Status.failure:
-  //                     return RetryDialog(
-  //                       title: state.error ?? "Error",
-  //                       onRetryPressed: () => context.read<UserBloc>().add(UserCreated(user)),
-  //                     );
-  //                   case Status.success:
-  //                     return ProgressDialog(
-  //                       title: "Successfully created",
-  //                       onPressed: () {
-  //                         context.read<UserBloc>().add(UsersFetched());
-  //                         Navigator.pop(context);
-  //                       },
-  //                       isProgressed: false,
-  //                     );
-  //                 }
-  //               },
-  //             );
-  //           },
-  //         );
-  //       }
-  //     },
-  //     child: const Icon(Icons.add),
-  //   );
-  // }
-
   Widget userListItem(User user) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
