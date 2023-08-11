@@ -8,6 +8,7 @@ import 'package:base_mvvm/repository/post/post_repository.dart';
 import 'package:base_mvvm/repository/todo/todo_repository.dart';
 import 'package:base_mvvm/repository/user/user_repository.dart';
 import 'package:base_mvvm/screens/todo/bloc/todo_bloc.dart';
+import 'package:base_mvvm/screens/user/bloc/user_bloc.dart';
 import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
 import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
 import 'package:dio/dio.dart';
@@ -59,4 +60,8 @@ Future<void> init() async {
 
   //Comment Bloc
   getIt.registerFactory(() => CommentBloc(commentRepository: getIt<CommentRepository>()));
+
+  //User Bloc
+  getIt.registerFactory(() => UserBloc(userRepository: getIt<UserRepository>()));
+
 }

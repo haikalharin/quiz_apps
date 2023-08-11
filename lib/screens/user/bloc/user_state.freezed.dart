@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'user_list_bloc.dart';
+part of 'user_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$UserListBloc {
+mixin _$UserState {
   List<User>? get data => throw _privateConstructorUsedError;
   Gender? get gender => throw _privateConstructorUsedError;
   UserStatus? get status => throw _privateConstructorUsedError;
@@ -96,24 +96,23 @@ mixin _$UserListBloc {
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $UserListBlocCopyWith<UserListBloc> get copyWith =>
+  $UserStateCopyWith<UserState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $UserListBlocCopyWith<$Res> {
-  factory $UserListBlocCopyWith(
-          UserListBloc value, $Res Function(UserListBloc) then) =
-      _$UserListBlocCopyWithImpl<$Res, UserListBloc>;
+abstract class $UserStateCopyWith<$Res> {
+  factory $UserStateCopyWith(UserState value, $Res Function(UserState) then) =
+      _$UserStateCopyWithImpl<$Res, UserState>;
   @useResult
   $Res call(
       {List<User>? data, Gender? gender, UserStatus? status, String? error});
 }
 
 /// @nodoc
-class _$UserListBlocCopyWithImpl<$Res, $Val extends UserListBloc>
-    implements $UserListBlocCopyWith<$Res> {
-  _$UserListBlocCopyWithImpl(this._value, this._then);
+class _$UserStateCopyWithImpl<$Res, $Val extends UserState>
+    implements $UserStateCopyWith<$Res> {
+  _$UserStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -150,7 +149,7 @@ class _$UserListBlocCopyWithImpl<$Res, $Val extends UserListBloc>
 }
 
 /// @nodoc
-abstract class _$$_EmptyCopyWith<$Res> implements $UserListBlocCopyWith<$Res> {
+abstract class _$$_EmptyCopyWith<$Res> implements $UserStateCopyWith<$Res> {
   factory _$$_EmptyCopyWith(_$_Empty value, $Res Function(_$_Empty) then) =
       __$$_EmptyCopyWithImpl<$Res>;
   @override
@@ -161,7 +160,7 @@ abstract class _$$_EmptyCopyWith<$Res> implements $UserListBlocCopyWith<$Res> {
 
 /// @nodoc
 class __$$_EmptyCopyWithImpl<$Res>
-    extends _$UserListBlocCopyWithImpl<$Res, _$_Empty>
+    extends _$UserStateCopyWithImpl<$Res, _$_Empty>
     implements _$$_EmptyCopyWith<$Res> {
   __$$_EmptyCopyWithImpl(_$_Empty _value, $Res Function(_$_Empty) _then)
       : super(_value, _then);
@@ -220,7 +219,7 @@ class _$_Empty implements _Empty {
 
   @override
   String toString() {
-    return 'UserListBloc.empty(data: $data, gender: $gender, status: $status, error: $error)';
+    return 'UserState.empty(data: $data, gender: $gender, status: $status, error: $error)';
   }
 
   @override
@@ -343,7 +342,7 @@ class _$_Empty implements _Empty {
   }
 }
 
-abstract class _Empty implements UserListBloc {
+abstract class _Empty implements UserState {
   const factory _Empty(
       {final List<User>? data,
       final Gender? gender,
@@ -365,8 +364,7 @@ abstract class _Empty implements UserListBloc {
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res>
-    implements $UserListBlocCopyWith<$Res> {
+abstract class _$$_LoadingCopyWith<$Res> implements $UserStateCopyWith<$Res> {
   factory _$$_LoadingCopyWith(
           _$_Loading value, $Res Function(_$_Loading) then) =
       __$$_LoadingCopyWithImpl<$Res>;
@@ -378,7 +376,7 @@ abstract class _$$_LoadingCopyWith<$Res>
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$UserListBlocCopyWithImpl<$Res, _$_Loading>
+    extends _$UserStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -438,7 +436,7 @@ class _$_Loading implements _Loading {
 
   @override
   String toString() {
-    return 'UserListBloc.loading(data: $data, gender: $gender, status: $status, error: $error)';
+    return 'UserState.loading(data: $data, gender: $gender, status: $status, error: $error)';
   }
 
   @override
@@ -561,7 +559,7 @@ class _$_Loading implements _Loading {
   }
 }
 
-abstract class _Loading implements UserListBloc {
+abstract class _Loading implements UserState {
   const factory _Loading(
       {final List<User>? data,
       final Gender? gender,
@@ -583,7 +581,7 @@ abstract class _Loading implements UserListBloc {
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> implements $UserListBlocCopyWith<$Res> {
+abstract class _$$_LoadedCopyWith<$Res> implements $UserStateCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @override
@@ -594,7 +592,7 @@ abstract class _$$_LoadedCopyWith<$Res> implements $UserListBlocCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$UserListBlocCopyWithImpl<$Res, _$_Loaded>
+    extends _$UserStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -654,7 +652,7 @@ class _$_Loaded implements _Loaded {
 
   @override
   String toString() {
-    return 'UserListBloc.loaded(data: $data, gender: $gender, status: $status, error: $error)';
+    return 'UserState.loaded(data: $data, gender: $gender, status: $status, error: $error)';
   }
 
   @override
@@ -777,7 +775,7 @@ class _$_Loaded implements _Loaded {
   }
 }
 
-abstract class _Loaded implements UserListBloc {
+abstract class _Loaded implements UserState {
   const factory _Loaded(
       {final List<User>? data,
       final Gender? gender,
@@ -799,8 +797,7 @@ abstract class _Loaded implements UserListBloc {
 }
 
 /// @nodoc
-abstract class _$$_FailureCopyWith<$Res>
-    implements $UserListBlocCopyWith<$Res> {
+abstract class _$$_FailureCopyWith<$Res> implements $UserStateCopyWith<$Res> {
   factory _$$_FailureCopyWith(
           _$_Failure value, $Res Function(_$_Failure) then) =
       __$$_FailureCopyWithImpl<$Res>;
@@ -812,7 +809,7 @@ abstract class _$$_FailureCopyWith<$Res>
 
 /// @nodoc
 class __$$_FailureCopyWithImpl<$Res>
-    extends _$UserListBlocCopyWithImpl<$Res, _$_Failure>
+    extends _$UserStateCopyWithImpl<$Res, _$_Failure>
     implements _$$_FailureCopyWith<$Res> {
   __$$_FailureCopyWithImpl(_$_Failure _value, $Res Function(_$_Failure) _then)
       : super(_value, _then);
@@ -871,7 +868,7 @@ class _$_Failure implements _Failure {
 
   @override
   String toString() {
-    return 'UserListBloc.failure(data: $data, gender: $gender, status: $status, error: $error)';
+    return 'UserState.failure(data: $data, gender: $gender, status: $status, error: $error)';
   }
 
   @override
@@ -994,7 +991,7 @@ class _$_Failure implements _Failure {
   }
 }
 
-abstract class _Failure implements UserListBloc {
+abstract class _Failure implements UserState {
   const factory _Failure(final List<User>? data, final Gender? gender,
       final UserStatus? status, final String? error) = _$_Failure;
 

@@ -11,19 +11,20 @@ import 'package:base_mvvm/repository/user/user_repository.dart';
 import 'package:base_mvvm/screens/post/screen/post_list_screen.dart';
 import 'package:base_mvvm/screens/todo/todo_list_screen.dart';
 import 'package:base_mvvm/screens/user/bloc/user_event.dart';
-import 'package:base_mvvm/screens/user/bloc/user_list_bloc.dart';
-import 'package:base_mvvm/screens/user/user_list_view_model.dart';
+import 'package:base_mvvm/screens/user/bloc/user_state.dart';
 import 'package:base_mvvm/screens/user/widget/fab_user_list.dart';
 import 'package:base_mvvm/screens/user/widget/status_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/user_bloc.dart';
 
 enum Operation { edit, delete, post, todo }
 
 class UserListScreen extends StatefulWidget {
   static Widget create() {
     return BlocProvider(
-      create: (_) => UserListViewModel(
+      create: (_) => UserBloc(
         userRepository: getIt<UserRepository>(),
       ),
       child: const UserListScreen(),
@@ -183,7 +184,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<UserListViewModel>();
+    final viewModel = context.watch<UserBloc>();
     return StatefulWrapper(
       onInit: () => viewModel.add(UsersFetched()),
       child: Scaffold(
@@ -207,11 +208,11 @@ class _UserListScreenState extends State<UserListScreen> {
           ],
           title: const Text("Users"),
         ),
-        body: BlocBuilder<UserListViewModel, UserListBloc>(
+        body: BlocBuilder<UserBloc, UserState>(
             // buildWhen: (prevState, curState) {
             //   return context.read<UserBloc>().operation == ApiOperation.select ? true : false;
             // },
-            builder: (BuildContext context, UserListBloc state) => state.when(
+            builder: (BuildContext context, UserState state) => state.when(
                   empty: (_, __, ___, ____) => const EmptyWidget(message: "No user!"),
                   loading: (_, __, ___, ____) => const SpinKitIndicator(type: SpinKitType.circle),
                   loaded: (data, _, __, ___) => ListView.builder(

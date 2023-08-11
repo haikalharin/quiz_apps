@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:base_mvvm/repository/user/user_repository.dart';
 import 'package:base_mvvm/screens/user/bloc/user_event.dart';
-import 'package:base_mvvm/screens/user/bloc/user_list_bloc.dart';
+import 'package:base_mvvm/screens/user/bloc/user_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UserListViewModel extends Bloc<UserEvent, UserListBloc> {
+class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository userRepository;
 
-  UserListViewModel({required this.userRepository}) : super(const UserListBloc.loading()) {
+  UserBloc({required this.userRepository}) : super(const UserState.loading()) {
     on<UsersFetched>(getUserList);
     on<UserCreated>(createUser);
   }
 
-  Future<void> getUserList(UsersFetched event, Emitter<UserListBloc> emit) async {
-    emit(UserListBloc.loading(
+  Future<void> getUserList(UsersFetched event, Emitter<UserState> emit) async {
+    emit(UserState.loading(
       data: state.data,
       status: state.status,
       gender: state.gender,
@@ -24,7 +24,7 @@ class UserListViewModel extends Bloc<UserEvent, UserListBloc> {
     final result = await userRepository.getUsers(status: status, gender: gender);
     result.when(
         success: (data) {
-          final state = UserListBloc.loaded(
+          final state = UserState.loaded(
             data: data,
             status: status,
             gender: gender,
@@ -34,8 +34,8 @@ class UserListViewModel extends Bloc<UserEvent, UserListBloc> {
         failure: (error) {});
   }
 
-  Future<void> createUser(UserCreated event, Emitter<UserListBloc> emit) async {
-    emit(UserListBloc.loading(
+  Future<void> createUser(UserCreated event, Emitter<UserState> emit) async {
+    emit(UserState.loading(
       data: state.data,
       status: state.status,
       gender: state.gender,
