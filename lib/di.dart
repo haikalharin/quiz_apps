@@ -4,9 +4,11 @@ import 'package:base_mvvm/data/api/post/post_api.dart';
 import 'package:base_mvvm/data/api/todo/todo_api.dart';
 import 'package:base_mvvm/data/api/user/user_api.dart';
 import 'package:base_mvvm/repository/comment/comment_repository.dart';
+import 'package:base_mvvm/repository/login/login_repository.dart';
 import 'package:base_mvvm/repository/post/post_repository.dart';
 import 'package:base_mvvm/repository/todo/todo_repository.dart';
 import 'package:base_mvvm/repository/user/user_repository.dart';
+import 'package:base_mvvm/screens/login_page/bloc/login_page_bloc.dart';
 import 'package:base_mvvm/screens/todo/bloc/todo_bloc.dart';
 import 'package:base_mvvm/screens/user/bloc/user_bloc.dart';
 import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
@@ -63,5 +65,8 @@ Future<void> init() async {
 
   //User Bloc
   getIt.registerFactory(() => UserBloc(userRepository: getIt<UserRepository>()));
+
+  //Login Bloc
+  getIt.registerFactory(() => LoginPageBloc(loginRepository: getIt<LoginRepository>()));
 
 }

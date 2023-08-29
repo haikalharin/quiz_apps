@@ -32,6 +32,19 @@ abstract mixin class ApiHelper<T> {
   }
 
   //Generic method template for getting data from Api
+  Future<T> makePostRequestWithData(Future<Response<dynamic>> apiCallback, T Function(Map<String, dynamic> json) getJsonCallback) async {
+    final Response response = await apiCallback;
+
+    final T items =  getJsonCallback(response.data);
+
+    if (response.statusCode.success) {
+      return items;
+    } else {
+      throw DioExceptions;
+    }
+  }
+
+  //Generic method template for getting data from Api
   Future<List<T>> makeGetRequest(Future<Response<dynamic>> apiCallback, T Function(Map<String, dynamic> json) getJsonCallback) async {
     final Response response = await apiCallback;
 

@@ -13,6 +13,16 @@ mixin RepositoryHelper<T> {
     }
   }
 
+  Future<ApiResult<T>> checkItemWithDataFailOrSuccess(Future<T> apiCallback) async {
+    try {
+      final T item = await apiCallback;
+      return ApiResult.success(item);
+    } on DioException catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      return ApiResult.failure(errorMessage);
+    }
+  }
+
   Future<ApiResult<bool>> checkItemFailOrSuccess(Future<bool> apiCallback) async {
     try {
       await apiCallback;

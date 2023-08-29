@@ -4,6 +4,7 @@ import 'package:base_mvvm/common/app_theme.dart';
 import 'package:base_mvvm/core/router/app_router.dart';
 import 'package:base_mvvm/core/router/routes.dart';
 import 'package:base_mvvm/environment_config.dart';
+import 'package:base_mvvm/screens/login_page/bloc/login_page_bloc.dart';
 import 'package:base_mvvm/screens/todo/bloc/todo_bloc.dart';
 import 'package:base_mvvm/screens/user/bloc/user_bloc.dart';
 import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PostBloc>(create: (context) => getIt<PostBloc>()),
         BlocProvider<CommentBloc>(create: (context) => getIt<CommentBloc>()),
         BlocProvider<UserBloc>(create: (context) => getIt<UserBloc>()),
+        BlocProvider<LoginPageBloc>(create: (context) => getIt<LoginPageBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

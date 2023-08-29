@@ -8,6 +8,7 @@ class DioClient {
   DioClient(this.dio) {
     dio
       ..options.baseUrl = ApiConfig.baseUrl
+      ..options.baseUrl = ApiConfig.baseUrl
       ..options.headers = ApiConfig.header
       ..options.connectTimeout = ApiConfig.connectionTimeout
       ..options.receiveTimeout = ApiConfig.receiveTimeout

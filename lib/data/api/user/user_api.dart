@@ -1,6 +1,8 @@
 import 'package:base_mvvm/core/network/api_config.dart';
 import 'package:base_mvvm/core/network/api_helper.dart';
 import 'package:base_mvvm/core/network/dio_client.dart';
+import 'package:base_mvvm/core/network/service_url.dart';
+import 'package:base_mvvm/data/model/login_model/login_model.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
 
 class UserApi with ApiHelper<User> {
@@ -19,7 +21,6 @@ class UserApi with ApiHelper<User> {
   Future<bool> deleteUser(User user) async {
     return await makeDeleteRequest(dioClient.dio.delete("${ApiConfig.users}/${user.id}"));
   }
-
   Future<List<User>> getUsers({Gender? gender, UserStatus? status}) async {
     Map<String, String> queryParameters = <String, String>{};
 
