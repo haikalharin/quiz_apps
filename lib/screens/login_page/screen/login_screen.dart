@@ -19,13 +19,10 @@ import '../bloc/login_page_state.dart';
 enum PostMode { create, update }
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen(
-      {Key? key, required this.user, this.mode = PostMode.create, this.post})
+  const LoginScreen({Key? key})
       : super(key: key);
 
-  final User user;
-  final Post? post;
-  final PostMode mode;
+
 
   @override
   State<LoginScreen> createState() => _LoginScreenScreenState();
@@ -44,12 +41,6 @@ class _LoginScreenScreenState extends State<LoginScreen> {
   }
 
   initializeValues() {
-    //Update
-    if (widget.post != null && widget.mode == PostMode.update) {
-      postTitle = widget.post?.title ?? "";
-      postBody = widget.post?.body ?? "";
-      postId = widget.post?.id ?? 0;
-    }
   }
 
   @override
@@ -57,7 +48,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
     final viewModel = context.watch<LoginPageBloc>();
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.mode.name.toCapital} post")),
+      appBar: AppBar(title: Text("Login")),
       body: BlocBuilder<LoginPageBloc, LoginPageState>(
           builder: (BuildContext context, LoginPageState state) => state.when(
               empty: (_, __, ___) => const EmptyWidget(message: "No user!"),
@@ -106,7 +97,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                                     .read<LoginPageBloc>()
                                     .add(LoginSubmitted());
                               },
-                              child: Text(widget.mode.name.toCapital),
+                              child: Text("Login".toCapital),
                             ),
                           )
                         ],
