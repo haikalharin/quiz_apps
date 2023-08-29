@@ -10,16 +10,16 @@ class LoginApi with ApiHelper<LoginModel> {
   LoginApi({required this.dioClient});
 
   Future<LoginModel> login({String? userName, String? password}) async {
-    Map<String, String> queryParameters = <String, String>{};
+    Map<String, String> data = <String, String>{};
 
     if (userName != null){
-      queryParameters.addAll({'username': userName});
+      data.addAll({'username': userName});
     }
 
     if (password != null) {
-      queryParameters.addAll({'password': password});
+      data.addAll({'password': password});
     }
 
-    return await makePostRequestWithData(dioClient.dio.get(ServiceUrl.login, queryParameters: queryParameters), LoginModel.fromJson);
+    return await makePostRequestWithData(dioClient.dio.post(ServiceUrl.login, data: data), LoginModel.fromJson);
   }
 }
