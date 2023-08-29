@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightAppTheme,
         navigatorKey: AppRouter.navigatorKey,
         routes: AppRouter.generateRoute(),
-        initialRoute: Routes.userList,
+        initialRoute: Routes.loginPage,
       ),
     );
   }

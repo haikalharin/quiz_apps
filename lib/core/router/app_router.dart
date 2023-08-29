@@ -9,7 +9,7 @@ class AppRouter {
   static Map<String, Widget Function(BuildContext context)> generateRoute() {
     return {
       Routes.userList: (context) => UserListScreen.create(),
-      Routes.loginPage: (context) => LoginScreen(user: user).create(),
+      Routes.loginPage: (context) => const LoginScreen(),
     };
   }
 }
