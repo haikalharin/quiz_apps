@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository userRepository;
 
-  UserBloc({required this.userRepository}) : super(const UserState.loading()) {
+  UserBloc({required this.userRepository}) : super(const UserState.loaded()) {
     on<UsersFetched>(getUserList);
     on<UserCreated>(createUser);
   }
@@ -31,7 +31,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           );
           emit(state);
         },
-        failure: (error) {});
+        failure: (error) {
+          emit(const UserState.empty());
+        });
   }
 
   Future<void> createUser(UserCreated event, Emitter<UserState> emit) async {

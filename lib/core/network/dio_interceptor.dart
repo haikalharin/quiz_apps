@@ -18,6 +18,7 @@ class DioInterceptor extends Interceptor {
     logger.i('HTTP method => ${options.method} ');
     logger.i('Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
     logger.i('Header  => ${options.headers}');
+    logger.i('Body  => ${options.data}');
     return super.onRequest(options, handler);
   }
 
@@ -26,6 +27,8 @@ class DioInterceptor extends Interceptor {
     final options = err.requestOptions;
     logger.e(options.method); // Debug log
     logger.e('Error: ${err.error}, Message: ${err.message}'); // Error log
+    logger.d('Response => StatusCode: ${err.response?.statusCode}'); // Debug log
+    logger.d('Response => Body: ${err.response?.data}'); // Debug log
     return super.onError(err, handler);
   }
 

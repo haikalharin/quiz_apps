@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:base_mvvm/core/router/router.dart' as router;
 
 import 'di.dart';
-
+enum SubmitStatus { empty, loading, failure, success }
 void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();

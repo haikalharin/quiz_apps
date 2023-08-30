@@ -20,3 +20,8 @@ class LoginSubmitted extends LoginPageEvent {
 
   LoginSubmitted();
 }
+
+class LoginPageInitial extends LoginPageEvent {
+
+  LoginPageInitial();
+}

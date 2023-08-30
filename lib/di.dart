@@ -16,6 +16,8 @@ import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
+import 'data/api/login/login.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> init() async {
@@ -35,6 +37,9 @@ Future<void> init() async {
   // Comment api
   getIt.registerLazySingleton<CommentApi>(() => CommentApi(dioClient: getIt<DioClient>()));
 
+  // Login api
+  getIt.registerLazySingleton<LoginApi>(() => LoginApi(dioClient: getIt<DioClient>()));
+
   // User repository
   getIt.registerLazySingleton<UserRepository>(
     () => UserRepository(userApi: getIt<UserApi>()),
@@ -52,6 +57,11 @@ Future<void> init() async {
   // Comment repository
   getIt.registerLazySingleton<CommentRepository>(
     () => CommentRepository(commentApi: getIt<CommentApi>()),
+  );
+
+  // Login repository
+  getIt.registerLazySingleton<LoginRepository>(
+        () => LoginRepository(loginApi: getIt<LoginApi>()),
   );
 
   //_Todo Bloc

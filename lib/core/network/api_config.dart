@@ -12,6 +12,6 @@ class ApiConfig {
   static const String todos = '/todos';
   static const header = {
     // 'Authorization': 'Bearer $token',
-    'content-Type': 'application/json',
+    'Content-Type': 'application/json',
   };
 }
