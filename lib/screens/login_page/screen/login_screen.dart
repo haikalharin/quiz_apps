@@ -46,7 +46,8 @@ class _LoginScreenScreenState extends State<LoginScreen> {
       appBar: AppBar(title: Text("Login")),
       body: BlocListener<LoginPageBloc, LoginPageState>(
         listener: (context, state) {
-          if (state.status == SubmitStatus.success.toString()) {
+          if (state.status == SubmitStatus.success.toString() &&
+              state.moveTo == Routes.userList) {
             Navigator.of(context).pushNamed(
               Routes.userList,
             );
@@ -54,9 +55,9 @@ class _LoginScreenScreenState extends State<LoginScreen> {
         },
         child: BlocBuilder<LoginPageBloc, LoginPageState>(
             builder: (BuildContext context, LoginPageState state) => state.when(
-                empty: (_, __, ___, ____) =>
+                empty: (_, __, ___, ____, _____) =>
                     const EmptyWidget(message: "No user!"),
-                loading: (_, __, ___, ____) =>
+                loading: (_, __, ___, ____, _____) =>
                     const SpinKitIndicator(type: SpinKitType.circle),
                 loaded: (data, _, __, ___, ____) => Padding(
                       padding: const EdgeInsets.all(15.0),

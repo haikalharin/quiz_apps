@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 
+import '../../../core/router/routes.dart';
 import '../../../data/model/user/user.dart';
 import '../../../repository/login/login_repository.dart';
 import '../../../repository/user/user_repository.dart';
@@ -45,6 +46,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           final state = LoginPageState.loaded(
             userName: userName,
             password: password,
+            moveTo: Routes.userList,
             status: SubmitStatus.success.toString()
           );
           emit(state);

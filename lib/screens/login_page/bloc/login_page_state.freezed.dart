@@ -18,15 +18,16 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$LoginPageState {
   String? get userName => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
+  String? get moveTo => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         empty,
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         loading,
     required TResult Function(String? userName, String? password,
             String? status, String? moveTo, String? error)
@@ -38,11 +39,11 @@ mixin _$LoginPageState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult? Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -54,11 +55,11 @@ mixin _$LoginPageState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -107,7 +108,11 @@ abstract class $LoginPageStateCopyWith<$Res> {
       _$LoginPageStateCopyWithImpl<$Res, LoginPageState>;
   @useResult
   $Res call(
-      {String? userName, String? password, String? error, String? status});
+      {String? userName,
+      String? password,
+      String? status,
+      String? moveTo,
+      String? error});
 }
 
 /// @nodoc
@@ -125,8 +130,9 @@ class _$LoginPageStateCopyWithImpl<$Res, $Val extends LoginPageState>
   $Res call({
     Object? userName = freezed,
     Object? password = freezed,
-    Object? error = freezed,
     Object? status = freezed,
+    Object? moveTo = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       userName: freezed == userName
@@ -137,13 +143,17 @@ class _$LoginPageStateCopyWithImpl<$Res, $Val extends LoginPageState>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      moveTo: freezed == moveTo
+          ? _value.moveTo
+          : moveTo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -157,7 +167,11 @@ abstract class _$$_EmptyCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? userName, String? password, String? error, String? status});
+      {String? userName,
+      String? password,
+      String? status,
+      String? moveTo,
+      String? error});
 }
 
 /// @nodoc
@@ -172,8 +186,9 @@ class __$$_EmptyCopyWithImpl<$Res>
   $Res call({
     Object? userName = freezed,
     Object? password = freezed,
-    Object? error = freezed,
     Object? status = freezed,
+    Object? moveTo = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$_Empty(
       userName: freezed == userName
@@ -184,13 +199,17 @@ class __$$_EmptyCopyWithImpl<$Res>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      moveTo: freezed == moveTo
+          ? _value.moveTo
+          : moveTo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -199,20 +218,23 @@ class __$$_EmptyCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Empty implements _Empty {
-  const _$_Empty({this.userName, this.password, this.error, this.status});
+  const _$_Empty(
+      {this.userName, this.password, this.status, this.moveTo, this.error});
 
   @override
   final String? userName;
   @override
   final String? password;
   @override
-  final String? error;
-  @override
   final String? status;
+  @override
+  final String? moveTo;
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'LoginPageState.empty(userName: $userName, password: $password, error: $error, status: $status)';
+    return 'LoginPageState.empty(userName: $userName, password: $password, status: $status, moveTo: $moveTo, error: $error)';
   }
 
   @override
@@ -224,13 +246,14 @@ class _$_Empty implements _Empty {
                 other.userName == userName) &&
             (identical(other.password, password) ||
                 other.password == password) &&
-            (identical(other.error, error) || other.error == error) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.moveTo, moveTo) || other.moveTo == moveTo) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, userName, password, error, status);
+      Object.hash(runtimeType, userName, password, status, moveTo, error);
 
   @JsonKey(ignore: true)
   @override
@@ -241,11 +264,11 @@ class _$_Empty implements _Empty {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         empty,
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         loading,
     required TResult Function(String? userName, String? password,
             String? status, String? moveTo, String? error)
@@ -254,17 +277,17 @@ class _$_Empty implements _Empty {
             String? status, String? moveTo, String? error)
         failure,
   }) {
-    return empty(userName, password, error, status);
+    return empty(userName, password, status, moveTo, error);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult? Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -273,17 +296,17 @@ class _$_Empty implements _Empty {
             String? moveTo, String? error)?
         failure,
   }) {
-    return empty?.call(userName, password, error, status);
+    return empty?.call(userName, password, status, moveTo, error);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -294,7 +317,7 @@ class _$_Empty implements _Empty {
     required TResult orElse(),
   }) {
     if (empty != null) {
-      return empty(userName, password, error, status);
+      return empty(userName, password, status, moveTo, error);
     }
     return orElse();
   }
@@ -341,17 +364,20 @@ abstract class _Empty implements LoginPageState {
   const factory _Empty(
       {final String? userName,
       final String? password,
-      final String? error,
-      final String? status}) = _$_Empty;
+      final String? status,
+      final String? moveTo,
+      final String? error}) = _$_Empty;
 
   @override
   String? get userName;
   @override
   String? get password;
   @override
-  String? get error;
-  @override
   String? get status;
+  @override
+  String? get moveTo;
+  @override
+  String? get error;
   @override
   @JsonKey(ignore: true)
   _$$_EmptyCopyWith<_$_Empty> get copyWith =>
@@ -367,7 +393,11 @@ abstract class _$$_LoadingCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? userName, String? password, String? error, String? status});
+      {String? userName,
+      String? password,
+      String? status,
+      String? moveTo,
+      String? error});
 }
 
 /// @nodoc
@@ -382,8 +412,9 @@ class __$$_LoadingCopyWithImpl<$Res>
   $Res call({
     Object? userName = freezed,
     Object? password = freezed,
-    Object? error = freezed,
     Object? status = freezed,
+    Object? moveTo = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$_Loading(
       userName: freezed == userName
@@ -394,13 +425,17 @@ class __$$_LoadingCopyWithImpl<$Res>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      moveTo: freezed == moveTo
+          ? _value.moveTo
+          : moveTo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -409,20 +444,23 @@ class __$$_LoadingCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loading implements _Loading {
-  const _$_Loading({this.userName, this.password, this.error, this.status});
+  const _$_Loading(
+      {this.userName, this.password, this.status, this.moveTo, this.error});
 
   @override
   final String? userName;
   @override
   final String? password;
   @override
-  final String? error;
-  @override
   final String? status;
+  @override
+  final String? moveTo;
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'LoginPageState.loading(userName: $userName, password: $password, error: $error, status: $status)';
+    return 'LoginPageState.loading(userName: $userName, password: $password, status: $status, moveTo: $moveTo, error: $error)';
   }
 
   @override
@@ -434,13 +472,14 @@ class _$_Loading implements _Loading {
                 other.userName == userName) &&
             (identical(other.password, password) ||
                 other.password == password) &&
-            (identical(other.error, error) || other.error == error) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.moveTo, moveTo) || other.moveTo == moveTo) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, userName, password, error, status);
+      Object.hash(runtimeType, userName, password, status, moveTo, error);
 
   @JsonKey(ignore: true)
   @override
@@ -451,11 +490,11 @@ class _$_Loading implements _Loading {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         empty,
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         loading,
     required TResult Function(String? userName, String? password,
             String? status, String? moveTo, String? error)
@@ -464,17 +503,17 @@ class _$_Loading implements _Loading {
             String? status, String? moveTo, String? error)
         failure,
   }) {
-    return loading(userName, password, error, status);
+    return loading(userName, password, status, moveTo, error);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult? Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -483,17 +522,17 @@ class _$_Loading implements _Loading {
             String? moveTo, String? error)?
         failure,
   }) {
-    return loading?.call(userName, password, error, status);
+    return loading?.call(userName, password, status, moveTo, error);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -504,7 +543,7 @@ class _$_Loading implements _Loading {
     required TResult orElse(),
   }) {
     if (loading != null) {
-      return loading(userName, password, error, status);
+      return loading(userName, password, status, moveTo, error);
     }
     return orElse();
   }
@@ -551,17 +590,20 @@ abstract class _Loading implements LoginPageState {
   const factory _Loading(
       {final String? userName,
       final String? password,
-      final String? error,
-      final String? status}) = _$_Loading;
+      final String? status,
+      final String? moveTo,
+      final String? error}) = _$_Loading;
 
   @override
   String? get userName;
   @override
   String? get password;
   @override
-  String? get error;
-  @override
   String? get status;
+  @override
+  String? get moveTo;
+  @override
+  String? get error;
   @override
   @JsonKey(ignore: true)
   _$$_LoadingCopyWith<_$_Loading> get copyWith =>
@@ -673,11 +715,11 @@ class _$_Loaded implements _Loaded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         empty,
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         loading,
     required TResult Function(String? userName, String? password,
             String? status, String? moveTo, String? error)
@@ -692,11 +734,11 @@ class _$_Loaded implements _Loaded {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult? Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -711,11 +753,11 @@ class _$_Loaded implements _Loaded {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -783,6 +825,7 @@ abstract class _Loaded implements LoginPageState {
   String? get password;
   @override
   String? get status;
+  @override
   String? get moveTo;
   @override
   String? get error;
@@ -898,11 +941,11 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         empty,
-    required TResult Function(
-            String? userName, String? password, String? error, String? status)
+    required TResult Function(String? userName, String? password,
+            String? status, String? moveTo, String? error)
         loading,
     required TResult Function(String? userName, String? password,
             String? status, String? moveTo, String? error)
@@ -917,11 +960,11 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult? Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult? Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult? Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -936,11 +979,11 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         empty,
-    TResult Function(
-            String? userName, String? password, String? error, String? status)?
+    TResult Function(String? userName, String? password, String? status,
+            String? moveTo, String? error)?
         loading,
     TResult Function(String? userName, String? password, String? status,
             String? moveTo, String? error)?
@@ -1008,6 +1051,7 @@ abstract class _Failure implements LoginPageState {
   String? get password;
   @override
   String? get status;
+  @override
   String? get moveTo;
   @override
   String? get error;
