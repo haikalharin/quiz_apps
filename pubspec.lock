@@ -355,6 +355,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.7.1"
+  kiwi:
+    dependency: "direct main"
+    description:
+      name: kiwi
+      sha256: dbb7346ce54ccaaed75e6c8321c64813dfcf9d78647ebbc53b447c92d070b5cc
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
+  kiwi_generator:
+    dependency: "direct main"
+    description:
+      name: kiwi_generator
+      sha256: "47eea1a40eab7f1a6b648ca66cdab3bdd54ac47a7abccaec7a464eb6a74d337e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   lints:
     dependency: transitive
     description:

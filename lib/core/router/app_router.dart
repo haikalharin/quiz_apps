@@ -8,7 +8,7 @@ class AppRouter {
 
   static Map<String, Widget Function(BuildContext context)> generateRoute() {
     return {
-      Routes.userList: (context) => UserListScreen.create(),
+      Routes.userList: (context) => const UserListScreen(),
       Routes.loginPage: (context) => const LoginScreen(),
     };
   }

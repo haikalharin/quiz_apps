@@ -1,27 +1,28 @@
 
-import 'package:flutter/cupertino.dart';
+
+part of 'login_page_bloc.dart';
 
 @immutable
 abstract class LoginPageEvent {}
 
-class UserNameInput extends LoginPageEvent {
+class UserNameInputEvent extends LoginPageEvent {
   final String userName;
 
-  UserNameInput(this.userName);
+  UserNameInputEvent(this.userName);
 }
 
-class PasswordInput extends LoginPageEvent {
+class PasswordInputEvent extends LoginPageEvent {
   final String password;
 
-  PasswordInput(this.password);
+  PasswordInputEvent(this.password);
 }
 
-class LoginSubmitted extends LoginPageEvent {
+class LoginSubmittedEvent extends LoginPageEvent {
 
-  LoginSubmitted();
+  LoginSubmittedEvent();
 }
 
-class LoginPageInitial extends LoginPageEvent {
+class LoginPageInitialEvent extends LoginPageEvent {
 
-  LoginPageInitial();
+  LoginPageInitialEvent();
 }

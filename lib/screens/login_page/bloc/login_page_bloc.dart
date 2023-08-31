@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:base_mvvm/main.dart';
 import 'package:bloc/bloc.dart';
@@ -6,52 +7,62 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../../../core/router/routes.dart';
-import '../../../data/model/user/user.dart';
+import 'package:equatable/equatable.dart';
 import '../../../repository/login/login_repository.dart';
-import '../../../repository/user/user_repository.dart';
-import 'login_page_event.dart';
-import 'login_page_state.dart';
 
+part 'login_page_event.dart';
 
+part 'login_page_state.dart';
 
 class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   final LoginRepository loginRepository;
 
-  LoginPageBloc({required this.loginRepository}) : super(const LoginPageState.loaded()) {
-    on<UserNameInput>(userNameInput);
-    on<PasswordInput>(passwordInput);
-    on<LoginSubmitted>(loginSubmitted);
-    on<LoginPageInitial>(loginPageInitial);
+  LoginPageBloc({required this.loginRepository}) : super(LoginPageState()) {
+    on<LoginPageEvent>((event, emit) {
+      on<UserNameInputEvent>(userNameInput);
+      on<PasswordInputEvent>(passwordInput);
+      on<LoginSubmittedEvent>(loginSubmitted);
+      on<LoginPageInitialEvent>(loginPageInitial);
+    });
   }
 
-  Future<void> loginPageInitial(LoginPageInitial event,  Emitter<LoginPageState> emit) async {
-    emit(const LoginPageState.loaded());
+  Future<void> loginPageInitial(
+      LoginPageInitialEvent event, Emitter<LoginPageState> emit) async {
+    emit(const LoginPageState(status: LoginPageStatus.initial));
   }
 
-  Future<void> userNameInput(UserNameInput event, Emitter<LoginPageState> emit) async {
-    emit.call(state.copyWith(userName: event.userName));
+  Future<void> userNameInput(
+      UserNameInputEvent event, Emitter<LoginPageState> emit) async {
+    emit(LoginPageState(
+      username: event.userName,
+    ));
   }
 
-  Future<void> passwordInput(PasswordInput event, Emitter<LoginPageState> emit) async {
-    emit.call(state.copyWith(password: event.password));
+  Future<void> passwordInput(
+      PasswordInputEvent event, Emitter<LoginPageState> xemit) async {
+    emit(LoginPageState(
+      username: state.username,
+      password: event.password,
+    ));
   }
 
-  Future<void> loginSubmitted(LoginSubmitted event,  Emitter<LoginPageState> emit) async {
-    final userName =  state.userName;
-    final password =  state.password;
-    emit(const LoginPageState.loading());
-    final result = await loginRepository.login(userName: userName, password: password);
-    result.when(
-        success: (data) {
-          final state = LoginPageState.loaded(
-            userName: userName,
-            password: password,
-            moveTo: Routes.userList,
-            status: SubmitStatus.success.toString()
-          );
-          emit(state);
-        },
-        failure: (error) {});
+  Future<void> loginSubmitted(
+      LoginSubmittedEvent event, Emitter<LoginPageState> emit) async {
+    final userName = state.username;
+    final password = state.password;
+    emit(state.copyWith(status: LoginPageStatus.loading));
+    final result =
+        await loginRepository.login(userName: userName, password: password);
+    result.when(success: (data) {
+      final stateFix = LoginPageState(
+          username: userName,
+          password: password,
+          moveTo: Routes.userList,
+          status: LoginPageStatus.success);
+      emit(stateFix);
+    }, failure: (error) {
+      final stateFix = LoginPageState(status: LoginPageStatus.error);
+      emit(stateFix);
+    });
   }
-
 }

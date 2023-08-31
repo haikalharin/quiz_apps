@@ -22,4 +22,5 @@ class AppString {
   static const appFont = "Roboto";
 
 
+
 }

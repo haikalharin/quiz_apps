@@ -1,32 +1,54 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'login_page_state.freezed.dart';
 
-enum Status { empty, loading, failure, success }
+part of 'login_page_bloc.dart';
 
-@freezed
-class LoginPageState with _$LoginPageState {
-  const factory LoginPageState.empty(
-      {String? userName,
-      String? password,
-      String? status,
-      String? moveTo,
-      String? error}) = _Empty;
+enum LoginPageStatus { initial, success, error, loading, selected }
 
-  const factory LoginPageState.loading(
-      {String? userName,
-      String? password,
-      String? status,
-      String? moveTo,
-      String? error}) = _Loading;
+extension LoginPageStatusX on LoginPageStatus {
+  bool get isInitial => this == LoginPageStatus.initial;
+  bool get isSuccess => this == LoginPageStatus.success;
+  bool get isError => this == LoginPageStatus.error;
+  bool get isLoading => this == LoginPageStatus.loading;
+  bool get isSelected => this == LoginPageStatus.selected;
+}
 
-  const factory LoginPageState.loaded(
-      {String? userName,
-      String? password,
-      String? status,
-      String? moveTo,
-      String? error}) = _Loaded;
+class LoginPageState extends Equatable {
+  final LoginPageStatus status;
+  final String? username;
+  final String? password;
+  final String? moveTo;
 
-  const factory LoginPageState.failure(String? userName, String? password,
-      String? status, String? moveTo, String? error) = _Failure;
+  const LoginPageState( {
+    this.username,
+    this.moveTo,
+    this.password,
+    this.status = LoginPageStatus.initial,
+
+  });
+
+
+
+
+  @override
+  List<Object?> get props => [ username,password];
+
+  LoginPageState copyWith({
+    String? username,
+    String? password,
+    String? moveTo,
+    LoginPageStatus? status,
+  }) {
+    return LoginPageState(
+      username: username ?? this.username,
+      password: password ?? this.password,
+      moveTo: moveTo ?? this.moveTo,
+      status: status ?? this.status,
+    );
+  }
+}
+
+class LoginPageInitial extends Equatable {
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
 }

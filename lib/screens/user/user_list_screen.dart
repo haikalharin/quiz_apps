@@ -208,7 +208,11 @@ class _UserListScreenState extends State<UserListScreen> {
           ],
           title: const Text("Users"),
         ),
-        body: BlocBuilder<UserBloc, UserState>(
+        body: BlocListener<UserBloc, UserState>(
+  listener: (context, state) {
+    // TODO: implement listener}
+  },
+  child: BlocBuilder<UserBloc, UserState>(
             // buildWhen: (prevState, curState) {
             //   return context.read<UserBloc>().operation == ApiOperation.select ? true : false;
             // },
@@ -225,6 +229,7 @@ class _UserListScreenState extends State<UserListScreen> {
                   ),
                   failure: (_, __, ___, error) => RetryDialog(title: error ?? '', onRetryPressed: () => viewModel.add(UsersFetched())),
                 )),
+),
       ),
     );
   }

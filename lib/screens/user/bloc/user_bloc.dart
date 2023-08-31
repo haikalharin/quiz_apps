@@ -29,6 +29,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             status: status,
             gender: gender,
           );
+
           emit(state);
         },
         failure: (error) {
