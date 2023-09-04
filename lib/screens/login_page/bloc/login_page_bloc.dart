@@ -33,15 +33,14 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
 
   Future<void> userNameInput(
       UserNameInputEvent event, Emitter<LoginPageState> emit) async {
-    emit(LoginPageState(
+    emit(state.copyWith(
       username: event.userName,
     ));
   }
 
   Future<void> passwordInput(
-      PasswordInputEvent event, Emitter<LoginPageState> xemit) async {
-    emit(LoginPageState(
-      username: state.username,
+      PasswordInputEvent event, Emitter<LoginPageState> emit) async {
+    emit(state.copyWith(
       password: event.password,
     ));
   }
