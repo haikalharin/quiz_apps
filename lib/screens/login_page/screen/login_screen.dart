@@ -25,6 +25,8 @@ class _LoginScreenScreenState extends State<LoginScreen> {
   String postBody = "";
   int postId = 0;
   final formKey = GlobalKey<FormState>();
+  var username = TextEditingController(text: "");
+  var password = TextEditingController(text: "");
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // initializeValues();
+    initializeValues();
     super.dispose();
   }
 
@@ -44,14 +46,17 @@ class _LoginScreenScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel =  getIt<LoginPageBloc>();
+    final viewModel = getIt<LoginPageBloc>();
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
       body: BlocListener<LoginPageBloc, LoginPageState>(
         listener: (context, state) {
-          if (state.status == LoginPageStatus.success &&
+          if (state.status.isSuccess &&
               state.moveTo == Routes.userList) {
+            username.clear();
+            password.clear();
+            getIt<LoginPageBloc>().add(LoginPageInitialEvent());
             Navigator.of(context).pushNamed(
               Routes.userList,
             );
@@ -68,6 +73,15 @@ class _LoginScreenScreenState extends State<LoginScreen> {
           children: [
             BlocBuilder<LoginPageBloc, LoginPageState>(
                 builder: (context, state) {
+                // if(state.status.isLoading){
+                //   return const SpinKitIndicator(type: SpinKitType.circle);
+                // } else if(state.status.isError){
+                //   return RetryDialog(
+                //       title: 'username dan password salah',
+                //       onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
+                //       onRetryPressed: () =>
+                //           viewModel.add(LoginSubmittedEvent()));
+                // }
               return Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Form(
@@ -76,27 +90,29 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextInput(
-                        initialValue: postTitle,
+                        controller: username,
+                        // initialValue: postTitle,
                         hint: "Username",
                         validator: (String? value) {
-                          if (value!.isNotEmpty) return null;
+                          if (value!.isNotEmpty|| value == "") return null;
                           return "Username cannot be empty";
                         },
                         onChanged: (String input) {
-                          getIt<LoginPageBloc>()
+                          viewModel
                               .add(UserNameInputEvent(input));
                         },
                       ),
                       const SizedBox(height: 15),
                       TextInput(
-                        initialValue: postBody,
+                        controller: password,
+                        // initialValue: postBody,
                         hint: "Password",
                         validator: (String? value) {
-                          if (value!.isNotEmpty) return null;
+                          if (value!.isNotEmpty|| value == "") return null;
                           return "Password cannot be empty";
                         },
                         onChanged: (String input) {
-                         getIt<LoginPageBloc>()
+                          viewModel
                               .add(PasswordInputEvent(input));
                         },
                       ),
@@ -105,7 +121,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         width: width * 0.4,
                         child: ElevatedButton(
                           onPressed: () {
-                            getIt<LoginPageBloc>().add(LoginSubmittedEvent());
+                            viewModel.add(LoginSubmittedEvent());
                           },
                           child: Text("Login".toCapital),
                         ),
@@ -127,7 +143,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                 return state.status.isError
                     ? RetryDialog(
                         title: 'username dan password salah',
-                        onCancelPressed: () => Navigator.pop(context),
+                        onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
                         onRetryPressed: () =>
                             viewModel.add(LoginSubmittedEvent()))
                     : Container();

@@ -30,7 +30,7 @@ class LoginPageState extends Equatable {
 
 
   @override
-  List<Object?> get props => [ username,password];
+  List<Object?> get props => [ username,password,status];
 
   LoginPageState copyWith({
     String? username,
@@ -42,7 +42,7 @@ class LoginPageState extends Equatable {
       username: username ?? this.username,
       password: password ?? this.password,
       moveTo: moveTo ?? this.moveTo,
-      status: status ?? this.status,
+      status: status ?? LoginPageStatus.initial,
     );
   }
 }
