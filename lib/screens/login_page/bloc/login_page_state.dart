@@ -47,7 +47,7 @@ class LoginPageState extends Equatable {
   }
 }
 
-class LoginPageInitial extends Equatable {
+class LoginPageInitial extends LoginPageState {
   @override
   // TODO: implement props
   List<Object?> get props => throw UnimplementedError();

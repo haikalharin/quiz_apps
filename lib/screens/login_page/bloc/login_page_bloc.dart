@@ -28,7 +28,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
 
   Future<void> loginPageInitial(
       LoginPageInitialEvent event, Emitter<LoginPageState> emit) async {
-    emit(const LoginPageState(status: LoginPageStatus.initial));
+    emit( LoginPageInitial());
   }
 
   Future<void> userNameInput(
@@ -49,19 +49,18 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
       LoginSubmittedEvent event, Emitter<LoginPageState> emit) async {
     final userName = state.username;
     final password = state.password;
-    emit(state.copyWith(status: LoginPageStatus.loading));
+    emit( state.copyWith (status: LoginPageStatus.loading));
     final result =
         await loginRepository.login(userName: userName, password: password);
     result.when(success: (data) {
-      final stateFix = LoginPageState(
+      emit( state.copyWith(
           username: userName,
           password: password,
           moveTo: Routes.userList,
-          status: LoginPageStatus.success);
-      emit(stateFix);
+          status: LoginPageStatus.success));
     }, failure: (error) {
-      final stateFix = LoginPageState(status: LoginPageStatus.error);
-      emit(stateFix);
+
+      emit( state.copyWith(status: LoginPageStatus.error));
     });
   }
 }

@@ -65,18 +65,18 @@ Future<void> init() async {
   );
 
   //_Todo Bloc
-  getIt.registerFactory(() => TodoBloc(todoRepository: getIt<TodoRepository>()));
+  getIt.registerLazySingleton(() => TodoBloc(todoRepository: getIt<TodoRepository>()));
 
   //Post Bloc
-  getIt.registerFactory(() => PostBloc(postRepository: getIt<PostRepository>()));
+  getIt.registerLazySingleton(() => PostBloc(postRepository: getIt<PostRepository>()));
 
   //Comment Bloc
-  getIt.registerFactory(() => CommentBloc(commentRepository: getIt<CommentRepository>()));
+  getIt.registerLazySingleton(() => CommentBloc(commentRepository: getIt<CommentRepository>()));
 
   //User Bloc
-  getIt.registerFactory(() => UserBloc(userRepository: getIt<UserRepository>()));
+  getIt.registerLazySingleton(() => UserBloc(userRepository: getIt<UserRepository>()));
 
   //Login Bloc
-  getIt.registerFactory(() => LoginPageBloc(loginRepository: getIt<LoginRepository>()));
+  getIt.registerLazySingleton(() => LoginPageBloc(loginRepository: getIt<LoginRepository>()));
 
 }

@@ -44,8 +44,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel =  context
-        .read<LoginPageBloc>();
+    final viewModel =  getIt<LoginPageBloc>();
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
@@ -56,71 +55,86 @@ class _LoginScreenScreenState extends State<LoginScreen> {
             Navigator.of(context).pushNamed(
               Routes.userList,
             );
+          } else if (state.status == LoginPageStatus.loading) {
+            const SpinKitIndicator(type: SpinKitType.circle);
+          } else {
+            RetryDialog(
+                title: 'username dan password salah',
+                onCancelPressed: () => viewModel.add(LoginPageInitialEvent()),
+                onRetryPressed: () => viewModel.add(LoginSubmittedEvent()));
           }
         },
-        child: BlocBuilder<LoginPageBloc, LoginPageState>(
-            builder: (context, state) {
-          return state.status.isInitial
-              ? Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        TextInput(
-                          initialValue: postTitle,
-                          hint: "Username",
-                          validator: (String? value) {
-                            if (value!.isNotEmpty) return null;
-                            return "Username cannot be empty";
+        child: Stack(
+          children: [
+            BlocBuilder<LoginPageBloc, LoginPageState>(
+                builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextInput(
+                        initialValue: postTitle,
+                        hint: "Username",
+                        validator: (String? value) {
+                          if (value!.isNotEmpty) return null;
+                          return "Username cannot be empty";
+                        },
+                        onChanged: (String input) {
+                          getIt<LoginPageBloc>()
+                              .add(UserNameInputEvent(input));
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      TextInput(
+                        initialValue: postBody,
+                        hint: "Password",
+                        validator: (String? value) {
+                          if (value!.isNotEmpty) return null;
+                          return "Password cannot be empty";
+                        },
+                        onChanged: (String input) {
+                         getIt<LoginPageBloc>()
+                              .add(PasswordInputEvent(input));
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        width: width * 0.4,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            getIt<LoginPageBloc>().add(LoginSubmittedEvent());
                           },
-                          onChanged: (String input) {
-                           getIt<LoginPageBloc>()
-                                .add(UserNameInputEvent(input));
-                          },
+                          child: Text("Login".toCapital),
                         ),
-                        const SizedBox(height: 15),
-                        TextInput(
-                          initialValue: postBody,
-                          hint: "Password",
-                          validator: (String? value) {
-                            if (value!.isNotEmpty) return null;
-                            return "Password cannot be empty";
-                          },
-                          onChanged: (String input) {
-                            context
-                                .read<LoginPageBloc>()
-                                .add(PasswordInputEvent(input));
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        SizedBox(
-                          width: width * 0.4,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              context
-                                  .read<LoginPageBloc>()
-                                  .add(LoginSubmittedEvent());
-                            },
-                            child: Text("Login".toCapital),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                )
-              : state.status.isLoading
-                  ? const SpinKitIndicator(type: SpinKitType.circle)
-                  : state.status.isError
-                      ? RetryDialog(
-                          title: 'username dan password salah',
-                          onCancelPressed: () =>
-                              viewModel.add(LoginPageInitialEvent()),
-                          onRetryPressed: () =>
-                              viewModel.add(LoginSubmittedEvent()))
-                      : const SizedBox();
-        }),
+                ),
+              );
+            }),
+            BlocBuilder<LoginPageBloc, LoginPageState>(
+              builder: (context, state) {
+                return state.status.isLoading
+                    ? const SpinKitIndicator(type: SpinKitType.circle)
+                    : Container();
+              },
+            ),
+            BlocBuilder<LoginPageBloc, LoginPageState>(
+              builder: (context, state) {
+                return state.status.isError
+                    ? RetryDialog(
+                        title: 'username dan password salah',
+                        onCancelPressed: () => Navigator.pop(context),
+                        onRetryPressed: () =>
+                            viewModel.add(LoginSubmittedEvent()))
+                    : Container();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
