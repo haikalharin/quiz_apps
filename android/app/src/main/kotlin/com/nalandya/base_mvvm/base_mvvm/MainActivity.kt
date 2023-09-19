@@ -1,4 +1,4 @@
-package com.nalandya.base_mvvm.base_mvvm
+package com.acl.base_mvvm
 
 import io.flutter.embedding.android.FlutterActivity
 

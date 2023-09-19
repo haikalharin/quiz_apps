@@ -7,12 +7,12 @@ class AppTheme {
 
   static ThemeData lightAppTheme = ThemeData(
     appBarTheme: const AppBarTheme(
-      color: Color(0xFFF4511E),
+      color: Colors.blue,
       centerTitle: true,
     ),
     dialogTheme: const DialogTheme(
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Color(0xFFF4511E), width: 1.0),
+        side: BorderSide(color: Colors.blue, width: 1.0),
         borderRadius: BorderRadius.all(
           Radius.circular(15.0),
         ),
@@ -25,11 +25,11 @@ class AppTheme {
         border: inputBorder),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFF4511E),
+        backgroundColor:  Colors.blue,
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFFF4511E),
+      backgroundColor: Colors.blue,
     ),
     fontFamily: AppString.appFont,
     textButtonTheme: TextButtonThemeData(
@@ -45,10 +45,10 @@ class AppTheme {
         borderRadius: BorderRadius.all(Radius.circular(8)),
         side: BorderSide(color: Colors.grey, width: 2),
       ),
-      dialHandColor: const Color(0xFFF4511E),
+      dialHandColor:  Colors.blue,
       hourMinuteColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
-              ? const Color(0xFFF4511E)
+              ? Colors.blue
               : Colors.black12),
       hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
@@ -61,7 +61,7 @@ class AppTheme {
       dayPeriodColor: Colors.transparent,
       dayPeriodTextColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
-              ? const Color(0xFFF4511E)
+              ? Colors.blue
               : Colors.black12),
       hourMinuteShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
