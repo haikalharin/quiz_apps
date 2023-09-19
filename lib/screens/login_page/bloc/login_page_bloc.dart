@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 
+import '../../../common/secure.dart';
 import '../../../core/router/routes.dart';
 import 'package:equatable/equatable.dart';
 import '../../../repository/login/login_repository.dart';
@@ -40,7 +41,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   Future<void> passwordInput(
       PasswordInputEvent event, Emitter<LoginPageState> emit) async {
     emit(state.copyWith(
-      password: event.password,
+      password: encrypt(event.password),
     ));
   }
 
