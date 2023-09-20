@@ -52,36 +52,39 @@ class _LoginScreenScreenState extends State<LoginScreen> {
       appBar: AppBar(title: Text("Login")),
       body: BlocListener<LoginPageBloc, LoginPageState>(
         listener: (context, state) {
-          if (state.status.isSuccess &&
-              state.moveTo == Routes.userList) {
+          if (state.status.isSuccess && state.moveTo == Routes.userList) {
             username.clear();
             password.clear();
             getIt<LoginPageBloc>().add(LoginPageInitialEvent());
             Navigator.of(context).pushNamed(
-              Routes.userList,
+              Routes.navbarPage,
             );
           } else if (state.status == LoginPageStatus.loading) {
             const SpinKitIndicator(type: SpinKitType.circle);
-          } else {
-            RetryDialog(
-                title: 'username dan password salah',
-                onCancelPressed: () => viewModel.add(LoginPageInitialEvent()),
-                onRetryPressed: () => viewModel.add(LoginSubmittedEvent()));
+          } else if (state.status == LoginPageStatus.error) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => RetryDialog(
+                    title: 'username dan password salah',
+                    onRetryPressed: () => [
+                          Navigator.pop(context),
+                          viewModel.add(LoginSubmittedEvent())
+                        ]));
           }
         },
         child: Stack(
           children: [
             BlocBuilder<LoginPageBloc, LoginPageState>(
                 builder: (context, state) {
-                // if(state.status.isLoading){
-                //   return const SpinKitIndicator(type: SpinKitType.circle);
-                // } else if(state.status.isError){
-                //   return RetryDialog(
-                //       title: 'username dan password salah',
-                //       onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
-                //       onRetryPressed: () =>
-                //           viewModel.add(LoginSubmittedEvent()));
-                // }
+              // if(state.status.isLoading){
+              //   return const SpinKitIndicator(type: SpinKitType.circle);
+              // } else if(state.status.isError){
+              //   return RetryDialog(
+              //       title: 'username dan password salah',
+              //       onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
+              //       onRetryPressed: () =>
+              //           viewModel.add(LoginSubmittedEvent()));
+              // }
               return Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Form(
@@ -94,12 +97,11 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         // initialValue: postTitle,
                         hint: "Username",
                         validator: (String? value) {
-                          if (value!.isNotEmpty|| value == "") return null;
+                          if (value!.isNotEmpty || value == "") return null;
                           return "Username cannot be empty";
                         },
                         onChanged: (String input) {
-                          viewModel
-                              .add(UserNameInputEvent(input));
+                          viewModel.add(UserNameInputEvent(input));
                         },
                       ),
                       const SizedBox(height: 15),
@@ -107,13 +109,13 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         controller: password,
                         // initialValue: postBody,
                         hint: "Password",
+                        obscureText: true,
                         validator: (String? value) {
-                          if (value!.isNotEmpty|| value == "") return null;
+                          if (value!.isNotEmpty || value == "") return null;
                           return "Password cannot be empty";
                         },
                         onChanged: (String input) {
-                          viewModel
-                              .add(PasswordInputEvent(input));
+                          viewModel.add(PasswordInputEvent(input));
                         },
                       ),
                       const SizedBox(height: 15),
@@ -138,17 +140,17 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     : Container();
               },
             ),
-            BlocBuilder<LoginPageBloc, LoginPageState>(
-              builder: (context, state) {
-                return state.status.isError
-                    ? RetryDialog(
-                        title: 'username dan password salah',
-                        onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
-                        onRetryPressed: () =>
-                            viewModel.add(LoginSubmittedEvent()))
-                    : Container();
-              },
-            ),
+            // BlocBuilder<LoginPageBloc, LoginPageState>(
+            //   builder: (context, state) {
+            //     return state.status.isError
+            //         ? RetryDialog(
+            //             title: 'username dan password salah',
+            //             onCancelPressed: () => viewModel.add(LoginPageInitialEvent()) ,
+            //             onRetryPressed: () =>
+            //                 viewModel.add(LoginSubmittedEvent()))
+            //         : Container();
+            //   },
+            // ),
           ],
         ),
       ),

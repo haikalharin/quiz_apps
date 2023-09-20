@@ -10,6 +10,7 @@ class TextInput extends StatelessWidget {
     this.controller,
     this.icon,
     this.focusNode,
+    this.obscureText,
     this.autoValidateMode = AutovalidateMode.onUserInteraction,
     required this.hint,
   }) : super(key: key);
@@ -23,6 +24,7 @@ class TextInput extends StatelessWidget {
   final TextEditingController? controller;
   final AutovalidateMode autoValidateMode;
   final FocusNode? focusNode;
+  final bool? obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,8 @@ class TextInput extends StatelessWidget {
       autovalidateMode: autoValidateMode,
       cursorColor: Colors.grey,
       initialValue: initialValue,
-      maxLines: maxLine,
+      maxLines: obscureText!= false || obscureText!= null?1:maxLine,
+      obscureText: obscureText?? false,
       decoration: InputDecoration(hintText: hint, prefixIcon: icon),
       onChanged: onChanged,
       validator: validator,

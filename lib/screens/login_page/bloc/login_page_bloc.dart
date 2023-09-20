@@ -63,7 +63,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
             status: LoginPageStatus.success));
       }, failure: (error) {
 
-        emit(state.copyWith(status: LoginPageStatus.error));
+        emit(state.copyWith(status: LoginPageStatus.error,username: userName,password: password));
       });
     }catch(error){
       print(error);

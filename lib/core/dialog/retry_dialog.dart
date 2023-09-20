@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 class RetryDialog extends StatelessWidget {
   const RetryDialog(
-      {Key? key, required this.title, required this.onRetryPressed, this.onCancelPressed})
+      {Key? key,
+      required this.title,
+      required this.onRetryPressed,
+      this.onCancelPressed})
       : super(key: key);
 
   final String title;
@@ -38,7 +41,8 @@ class RetryDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: onCancelPressed,
+                onPressed: onCancelPressed ??
+                    () => Navigator.pop(context),
                 child: const Text("Cancel"),
               ),
               const SizedBox(width: 15),
