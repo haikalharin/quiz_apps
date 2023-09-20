@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.nalandya.base_mvvm.base_mvvm"
+    namespace "com.test.base_mvvm"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -45,7 +45,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.nalandya.base_mvvm.base_mvvm"
+        applicationId "com.test.base_mvvm"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -59,6 +59,24 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+        }
+    }
+
+    flavorDimensions "app"
+
+    productFlavors {
+        dev {
+            dimension "app"
+            versionNameSuffix "-dev"
+            applicationIdSuffix ".dev"
+        }
+        staging {
+            dimension "app"
+            versionNameSuffix "-staging"
+            applicationIdSuffix ".staging"
+        }
+        prod {
+            dimension "app"
         }
     }
 }
