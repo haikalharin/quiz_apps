@@ -7,6 +7,7 @@ import 'package:base_mvvm/screens/login_page/bloc/login_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/widget/drop_down.dart';
 import '../../../core/widget/empty_widget.dart';
 import '../../../core/widget/spinkit_indicator.dart';
 import '../../../di.dart';
@@ -118,6 +119,10 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                           viewModel.add(PasswordInputEvent(input));
                         },
                       ),
+
+                      DropDown(onChanged: (value) {
+
+                      }, items: const ["a","b","c"],initialItem: "a",),
                       const SizedBox(height: 15),
                       SizedBox(
                         width: width * 0.4,
