@@ -1,4 +1,4 @@
-package com.test.base_mvvm
+package com.acl.base_mvvm
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,18 +1,22 @@
-import 'package:base_mvvm/viewmodel/comment/controller/comment_controller.dart';
-import 'package:base_mvvm/viewmodel/post/controller/post_controller.dart';
-import 'package:base_mvvm/viewmodel/todo/controller/todo_controller.dart';
-import 'package:base_mvvm/viewmodel/user/controller/user_controller.dart';
-import 'package:base_mvvm/repository/comment/comment_repository.dart';
-import 'package:base_mvvm/repository/post/post_repository.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/api/comment/comment_api.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
 import 'package:base_mvvm/data/api/post/post_api.dart';
 import 'package:base_mvvm/data/api/todo/todo_api.dart';
 import 'package:base_mvvm/data/api/user/user_api.dart';
-import 'repository/todo/todo_repository.dart';
-import 'repository/user/user_repository.dart';
-import 'package:get_it/get_it.dart';
+import 'package:base_mvvm/repository/comment/comment_repository.dart';
+import 'package:base_mvvm/repository/login/login_repository.dart';
+import 'package:base_mvvm/repository/post/post_repository.dart';
+import 'package:base_mvvm/repository/todo/todo_repository.dart';
+import 'package:base_mvvm/repository/user/user_repository.dart';
+import 'package:base_mvvm/screens/login_page/bloc/login_page_bloc.dart';
+import 'package:base_mvvm/screens/todo/bloc/todo_bloc.dart';
+import 'package:base_mvvm/screens/user/bloc/user_bloc.dart';
+import 'package:base_mvvm/viewmodel/comment/bloc/comment_bloc.dart';
+import 'package:base_mvvm/viewmodel/post/bloc/post_bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+
+import 'data/api/login/login.dart';
 
 final getIt = GetIt.instance;
 
@@ -22,20 +26,19 @@ Future<void> init() async {
   getIt.registerLazySingleton<DioClient>(() => DioClient(getIt<Dio>()));
 
   // User api
-  getIt.registerLazySingleton<UserApi>(
-      () => UserApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApi>(() => UserApi(dioClient: getIt<DioClient>()));
 
   // _Todo api
-  getIt.registerLazySingleton<ToDoApi>(
-      () => ToDoApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<ToDoApi>(() => ToDoApi(dioClient: getIt<DioClient>()));
 
   // Post api
-  getIt.registerLazySingleton<PostApi>(
-      () => PostApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<PostApi>(() => PostApi(dioClient: getIt<DioClient>()));
 
   // Comment api
-  getIt.registerLazySingleton<CommentApi>(
-      () => CommentApi(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton<CommentApi>(() => CommentApi(dioClient: getIt<DioClient>()));
+
+  // Login api
+  getIt.registerLazySingleton<LoginApi>(() => LoginApi(dioClient: getIt<DioClient>()));
 
   // User repository
   getIt.registerLazySingleton<UserRepository>(
@@ -56,23 +59,24 @@ Future<void> init() async {
     () => CommentRepository(commentApi: getIt<CommentApi>()),
   );
 
-  //UserController
-  getIt.registerFactory(
-    () => UserController(userRepository: getIt<UserRepository>()),
+  // Login repository
+  getIt.registerLazySingleton<LoginRepository>(
+        () => LoginRepository(loginApi: getIt<LoginApi>()),
   );
 
-  //TodoController
-  getIt.registerFactory(
-    () => ToDoController(todoRepository: getIt<TodoRepository>()),
-  );
+  //_Todo Bloc
+  getIt.registerLazySingleton(() => TodoBloc(todoRepository: getIt<TodoRepository>()));
 
-  //PostController
-  getIt.registerFactory(
-    () => PostController(postRepository: getIt<PostRepository>()),
-  );
-  //
-  // //CommentController
-  getIt.registerFactory(
-    () => CommentController(commentRepository: getIt<CommentRepository>()),
-  );
+  //Post Bloc
+  getIt.registerLazySingleton(() => PostBloc(postRepository: getIt<PostRepository>()));
+
+  //Comment Bloc
+  getIt.registerLazySingleton(() => CommentBloc(commentRepository: getIt<CommentRepository>()));
+
+  //User Bloc
+  getIt.registerLazySingleton(() => UserBloc(userRepository: getIt<UserRepository>()));
+
+  //Login Bloc
+  getIt.registerLazySingleton(() => LoginPageBloc(loginRepository: getIt<LoginRepository>()));
+
 }

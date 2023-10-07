@@ -1,7 +1,7 @@
-import 'package:base_mvvm/common/network/api_helper.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
+import 'package:base_mvvm/core/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_helper.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
 import 'package:base_mvvm/data/model/todo/todo.dart';
-import 'package:base_mvvm/core/api_config.dart';
 
 class ToDoApi with ApiHelper<ToDo> {
   final DioClient dioClient;
@@ -21,9 +21,7 @@ class ToDoApi with ApiHelper<ToDo> {
   }
 
   Future<List<ToDo>> getTodos(int userId, {TodoStatus? status}) async {
-    Map<String, String> queryParameters = <String, String>{
-      'user_id': "$userId"
-    };
+    Map<String, String> queryParameters = <String, String>{'user_id': "$userId"};
 
     if (status != null && status != TodoStatus.all) {
       queryParameters.addAll({'status': status.name});

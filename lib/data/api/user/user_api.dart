@@ -1,7 +1,9 @@
-import 'package:base_mvvm/common/network/api_helper.dart';
-import 'package:base_mvvm/common/network/dio_client.dart';
+import 'package:base_mvvm/core/network/api_config.dart';
+import 'package:base_mvvm/core/network/api_helper.dart';
+import 'package:base_mvvm/core/network/dio_client.dart';
+import 'package:base_mvvm/core/network/service_url.dart';
+import 'package:base_mvvm/data/model/login_model/login_model.dart';
 import 'package:base_mvvm/data/model/user/user.dart';
-import 'package:base_mvvm/core/api_config.dart';
 
 class UserApi with ApiHelper<User> {
   final DioClient dioClient;
@@ -19,7 +21,6 @@ class UserApi with ApiHelper<User> {
   Future<bool> deleteUser(User user) async {
     return await makeDeleteRequest(dioClient.dio.delete("${ApiConfig.users}/${user.id}"));
   }
-
   Future<List<User>> getUsers({Gender? gender, UserStatus? status}) async {
     Map<String, String> queryParameters = <String, String>{};
 
@@ -31,8 +32,6 @@ class UserApi with ApiHelper<User> {
       queryParameters.addAll({'status': status.name});
     }
 
-    return await makeGetRequest(
-        dioClient.dio.get(ApiConfig.users, queryParameters: queryParameters),
-        User.fromJson);
+    return await makeGetRequest(dioClient.dio.get(ApiConfig.users, queryParameters: queryParameters), User.fromJson);
   }
 }
