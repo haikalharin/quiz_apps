@@ -20,17 +20,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'di.dart';
 enum SubmitStatus { empty, loading, failure, success }
 void main() async {
-  runZonedGuarded<Future<void>>(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await init();
-    if (kDebugMode) {
-      print(EnvironmentConfig.envName);
-    }
-    runApp(const MyApp());
-  }, (error, stack) async {
-    // await Sentry.captureException(error, stackTrace: stack);
-    // await FirebaseCrashlytics.instance.recordError(error, stack);
-  });
+  // runZonedGuarded<Future<void>>(() async {
+  //
+  //
+  //   if (kDebugMode) {
+  //     print(EnvironmentConfig.envName);
+  //   }
+  //
+  // }, (error, stack) async {
+  //   // await Sentry.captureException(error, stackTrace: stack);
+  //   // await FirebaseCrashlytics.instance.recordError(error, stack);
+  // });
+  await init();
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginPageBloc>(create: (context) => getIt<LoginPageBloc>()),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        // debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
         navigatorKey: AppRouter.navigatorKey,
         routes: AppRouter.generateRoute(),
