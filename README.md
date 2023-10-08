@@ -4,16 +4,10 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+HOW TO RUNING THIS PROJECT
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# quiz_apps
-
-flutter packages pub run build_runner build --delete-conflicting-outputs
+install flutter 3.13.1
+SDK 3.1.0
+pub get
+run this code in terminal -> flutter packages pub run build_runner build --delete-conflicting-outputs
+run apps
