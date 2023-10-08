@@ -8,10 +8,9 @@ import '../../common/remote_utils.dart';
 import '../../screens/category_page/screen/category_page.dart';
 import '../../screens/questioner_page/questioner_page.dart';
 
-
-
 class AppRouter {
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -22,14 +21,16 @@ class AppRouter {
       case Routes.questionerPage:
         return MaterialPageRoute(
             builder: (_) => QuestionerPage(
-              quizData: getQuestioner(settings.arguments),
-            ));
+                  quizData: getQuestioner(settings.arguments),
+                ));
 
       case Routes.resultPage:
         return MaterialPageRoute(
             builder: (_) => ResultsPage(
-              quizData: getQuestioner(settings.arguments), userAnswers: getAnswer(settings.arguments),
-            ));
+                  quizData: getQuestioner(settings.arguments),
+                  userAnswers: getAnswer(settings.arguments),
+                  totalCorrect: getCorrect(settings.arguments),
+                ));
 
       default:
         return MaterialPageRoute(

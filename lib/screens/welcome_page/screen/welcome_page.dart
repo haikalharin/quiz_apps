@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:random_string/random_string.dart';
 
+import '../../../common/remote_utils.dart';
 import '../../../core/router/routes.dart';
+import '../../../di.dart';
+import '../../questioner_page/bloc/questioner_page_bloc.dart';
 
 class WelcomePage extends StatelessWidget {
   @override
@@ -10,7 +15,17 @@ class WelcomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Flutter Quiz Apps"),
       ),
-      body: Center(
+      body: BlocListener<QuestionerPageBloc, QuestionerPageState>(
+        listener: (context, state) {
+          if (state.status.isSuccess && state.moveTo == Routes.questionerPage) {
+            Navigator.of(context).pushNamed(Routes.questionerPage, arguments: {
+              "questioner": state.listQuestionerModel,
+            });
+          }
+        },
+  child: BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
+  builder: (context, state) {
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -41,7 +56,12 @@ class WelcomePage extends StatelessWidget {
               width: MediaQuery.of(context).size.width/1.5,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add your play button functionality here
+                  List<String> listCategory = ['Politics','Animals','Fruits'];
+                  int index = randomBetween(0, 2);
+                  String category = listCategory[index];
+                  getIt<QuestionerPageBloc>()
+                      .add(GetListQuestionerEvent(category));
+                  
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.blue,
@@ -77,9 +97,42 @@ class WelcomePage extends StatelessWidget {
                 child: Text("Topics"),
               ),
             ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.share),
+                      onPressed: () {
+                        launchUrlWa(
+                            "Lets Play and Learn");
+                      },
+                    ),
+                    Text("Share")
+                  ],
+                ),
+                SizedBox(width: 10),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.star),
+                      onPressed: () {
+                        // Add rate functionality here
+                      },
+                    ),
+                    Text("Rate us")
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
-      ),
+      );
+  },
+),
+),
     );
   }
 }

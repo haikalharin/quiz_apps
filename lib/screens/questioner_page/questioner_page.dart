@@ -13,6 +13,8 @@ import 'bloc/questioner_page_bloc.dart';
 bool isChoise = false;
 bool isIgnore = false;
 List<String> listAnswer = [];
+int totalCorrect = 0;
+QuestionerPageStatus status = QuestionerPageStatus.loading;
 late Timer timer;
 
 class QuestionerPage extends StatefulWidget {
@@ -27,7 +29,6 @@ class QuestionerPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuestionerPage> {
-
   int currentIndex = 0;
   double progressValue = 0.0;
 
@@ -36,6 +37,9 @@ class _QuizPageState extends State<QuestionerPage> {
     super.initState();
     isChoise = false;
     isIgnore = false;
+    isIgnore = false;
+    totalCorrect = 0;
+    status = QuestionerPageStatus.loading;
     startTimer();
   }
 
@@ -43,9 +47,10 @@ class _QuizPageState extends State<QuestionerPage> {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (progressValue >= 1) {
+          listAnswer.add('');
           nextQuestion();
         } else {
-          progressValue += 0.016;
+          progressValue += 0.03333;
         }
       });
     });
@@ -58,9 +63,11 @@ class _QuizPageState extends State<QuestionerPage> {
         progressValue = 0.0;
         isChoise = false;
         isIgnore = false;
+        timer.cancel();
         startTimer();
       } else {
-
+        getIt<QuestionerPageBloc>()
+            .add(AnswerInputEvent(listAnswer));
         timer.cancel();
         // You can add logic to show a result screen or do something else here
       }
@@ -71,6 +78,8 @@ class _QuizPageState extends State<QuestionerPage> {
   void dispose() {
     timer.cancel();
     listAnswer = [];
+    totalCorrect = 0;
+    status = QuestionerPageStatus.loading;
     super.dispose();
   }
 
@@ -79,6 +88,31 @@ class _QuizPageState extends State<QuestionerPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Quiz App'),
+        actions: [
+          // Add your right-aligned action here
+          TextButton(
+            style: ButtonStyle(
+              side: MaterialStateProperty.all<BorderSide>(
+                BorderSide(
+                  color: Colors.blue, // Change this color to your desired border color
+                  width: 0.0, // You can adjust the width of the border
+                ),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.welcomePage,
+                    (Route<dynamic> route) => false,
+              );
+            },
+            child: const Text(
+              'Exit',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
       body: BlocListener<QuestionerPageBloc, QuestionerPageState>(
         listener: (context, state) {
@@ -86,70 +120,76 @@ class _QuizPageState extends State<QuestionerPage> {
             Navigator.of(context).pushNamed(Routes.resultPage, arguments: {
               "questioner": state.listQuestionerModel,
               "answer": state.listAnswer,
+              "correct": totalCorrect,
             });
           }
         },
         child: BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
           builder: (context, state) {
             final currentQuestion = state.listQuestionerModel != null &&
+                    state.listQuestionerModel!.isNotEmpty
+                ? state.listQuestionerModel![currentIndex].question
+                : "";
+            final currentImage = state.listQuestionerModel != null &&
                 state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].question ?? ""
+                ? state.listQuestionerModel![currentIndex].imagePath
                 : "";
             final List<String> currentAnswers =
-            state.listQuestionerModel != null &&
-                state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].answers ?? []
-                : [];
+                state.listQuestionerModel != null &&
+                        state.listQuestionerModel!.isNotEmpty
+                    ? state.listQuestionerModel![currentIndex].answers
+                    : [];
             final currentCorrectAnswers = state.listQuestionerModel != null &&
-                state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].correctAnswer ?? ""
+                    state.listQuestionerModel!.isNotEmpty
+                ? state.listQuestionerModel![currentIndex].correctAnswer
                 : "";
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    LinearProgressIndicator(
-                      value: progressValue,
-                      minHeight: 10.0,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
-                    ),
-                    SizedBox(height: 16.0),
-                    currentQuestion.isNotEmpty
-                        ? QuizCard(
-                      currentQuestion,
-                      '',
-                      currentAnswers,
-                      currentCorrectAnswers,
-                      nextQuestion: () {
-                        setState(() {
-                          if (currentIndex <
-                              widget.quizData!.length - 1) {
-                            currentIndex++;
-                            progressValue = 0.0;
-                            isChoise = false;
-                            isIgnore = false;
-                            startTimer();
-                          } else {
-                            getIt<QuestionerPageBloc>().add(AnswerInputEvent(listAnswer));
-                            timer.cancel();
-                            // You can add logic to show a result screen or do something else here
-                          }
-                        });
-                      },
-                    )
-                        : const SpinKitIndicator(type: SpinKitType.circle),
-                    BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
-                      builder: (context, state) {
-                        return state.status.isLoading
-                            ? const SpinKitIndicator(type: SpinKitType.circle)
-                            : Container();
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            );
+            return currentQuestion.isNotEmpty
+                ? Stack(
+                    children: [
+                      Column(
+                        children: [
+                          LinearProgressIndicator(
+                            value: progressValue,
+                            minHeight: 10.0,
+                            backgroundColor: Colors.grey[300],
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.yellow),
+                          ),
+                          SizedBox(height: 16.0),
+                          QuizCard(
+                            currentQuestion,
+                            currentImage,
+                            currentAnswers,
+                            currentCorrectAnswers,
+                            nextQuestion: () {
+                              setState(() {
+                                if (currentIndex <
+                                    widget.quizData!.length - 1) {
+                                  currentIndex++;
+                                  progressValue = 0.0;
+                                  isChoise = false;
+                                  isIgnore = false;
+                                  startTimer();
+                                } else {
+                                  getIt<QuestionerPageBloc>()
+                                      .add(AnswerInputEvent(listAnswer));
+                                  timer.cancel();
+                                  // You can add logic to show a result screen or do something else here
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                : timer.tick > 10
+                    ? Container(
+                        child: const Center(
+                          child: Text("data not found"),
+                        ),
+                      )
+                    : SpinKitIndicator(type: SpinKitType.circle);
           },
         ),
       ),
@@ -164,13 +204,14 @@ class QuizCard extends StatefulWidget {
   final String correctAnswer; // Add the correct answer field
   final Function() nextQuestion; // Add the correct answer field
 
-  QuizCard(this.question,
-      this.imagePath,
-      this.answers,
-      this.correctAnswer, {
-        super.key,
-        required this.nextQuestion,
-      });
+  QuizCard(
+    this.question,
+    this.imagePath,
+    this.answers,
+    this.correctAnswer, {
+    super.key,
+    required this.nextQuestion,
+  });
 
   @override
   State<QuizCard> createState() => _QuizCardState();
@@ -185,11 +226,13 @@ class _QuizCardState extends State<QuizCard> {
       margin: EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Image.asset(
-            widget.imagePath,
-            width: 200,
-            height: 200,
-          ),
+          widget.imagePath.isNotEmpty
+              ? Image.network(
+                  widget.imagePath,
+                  width: 200,
+                  height: 200,
+                )
+              : Container(),
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
@@ -200,41 +243,38 @@ class _QuizCardState extends State<QuizCard> {
           IgnorePointer(
             ignoring: isIgnore,
             child: Column(
-              children: widget.answers
-                  .asMap()
-                  .entries
-                  .map((entry) {
+              children: widget.answers.asMap().entries.map((entry) {
                 final index = entry.key;
                 final answer = entry.value;
                 final isCorrect = answer == widget.correctAnswer;
                 return Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  width: MediaQuery.of(context).size.width,
                   margin: EdgeInsets.symmetric(horizontal: 16),
                   child: ElevatedButton(
                     style: isChoise && indexActive == index
                         ? ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        isCorrect ? Colors.green : Colors.red,
-                      ),
-                    )
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              isCorrect ? Colors.green : Colors.red,
+                            ),
+                          )
                         : isCorrect && isChoise
-                        ? ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.green),
-                    )
-                        : ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.blue,
-                      ),
-                    ),
+                            ? ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.green),
+                              )
+                            : ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  Colors.blue,
+                                ),
+                              ),
                     onPressed: () {
                       setState(() {
                         indexActive = index;
                         isChoise = true;
                         isIgnore = true;
+                        if (isCorrect) totalCorrect++;
                         listAnswer.add(answer);
                         timer.cancel();
                       });
@@ -243,7 +283,7 @@ class _QuizCardState extends State<QuizCard> {
                         print('Delayed code executed after 2 seconds');
                       });
                     },
-                    child: Text(answer),
+                    child: Text(answer, style: TextStyle(color: Colors.white),),
                   ),
                 );
               }).toList(),

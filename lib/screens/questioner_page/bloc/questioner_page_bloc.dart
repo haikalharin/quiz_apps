@@ -52,10 +52,9 @@ class QuestionerPageBloc extends Bloc<QuestionerPageEvent, QuestionerPageState> 
   Future<void> getListQuestioner(
       GetListQuestionerEvent event, Emitter<QuestionerPageState> emit) async {
     emit(state.copyWith(status: QuestionerPageStatus.loading));
-
     Future.delayed(const Duration(seconds: 2));
     try {
-      final result = await questionerRepository.getListQuestioner('politics');
+      final result = await questionerRepository.getListQuestioner(event.category);
       result.when(success: (data) {
         emit(state.copyWith(
           listQuestionerModel: data,

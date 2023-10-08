@@ -4,6 +4,7 @@ import 'package:quiz_apps/screens/questioner_page/bloc/questioner_page_bloc.dart
 import 'package:quiz_apps/screens/questioner_page/bloc/questioner_page_bloc.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../core/widget/spinkit_indicator.dart';
 import '../../../di.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -27,29 +28,56 @@ class CategoryPage extends StatelessWidget {
             });
           }
         },
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            ContainerWithTextAndIcon(
-              text: "Politics",
-              icon: Icons.arrow_forward_ios,
-              function: () {
-                getIt<QuestionerPageBloc>().add(GetListQuestionerEvent());
-              },
-            ),
-            SizedBox(height: 20),
-            ContainerWithTextAndIcon(
-              text: "Animals",
-              icon: Icons.arrow_forward_ios,
-              function: () {},
-            ),
-            SizedBox(height: 20),
-            ContainerWithTextAndIcon(
-              text: "GK",
-              icon: Icons.arrow_forward_ios,
-              function: () {},
-            ),
-          ],
+        child: BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
+          builder: (context, state) {
+            return Stack(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: 20),
+                    ContainerWithTextAndIcon(
+                      text: "Politics",
+                      icon: Icons.arrow_forward_ios,
+                      function: () {
+                        getIt<QuestionerPageBloc>()
+                            .add(GetListQuestionerEvent('Politics'));
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ContainerWithTextAndIcon(
+                      text: "Animals",
+                      icon: Icons.arrow_forward_ios,
+                      function: () {
+                        getIt<QuestionerPageBloc>()
+                            .add(GetListQuestionerEvent('Animals'));
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ContainerWithTextAndIcon(
+                      text: "Fruits",
+                      icon: Icons.arrow_forward_ios,
+                      function: () {
+                        getIt<QuestionerPageBloc>()
+                            .add(GetListQuestionerEvent('Fruits'));
+                      },
+                    ),
+                  ],
+                ),
+
+                state.status.isLoading?
+
+                const SpinKitIndicator(type: SpinKitType.circle):Container()
+                // BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
+                //   builder: (context, state) {
+                //     return state.status.isLoading
+                //         ? Container(
+                //             child: const SpinKitIndicator(type: SpinKitType.circle))
+                //         : Container();
+                //   },
+                // )
+              ],
+            );
+          },
         ),
       ),
     );
@@ -72,7 +100,10 @@ class ContainerWithTextAndIcon extends StatelessWidget {
     return InkWell(
       onTap: function,
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         margin: EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.blue,

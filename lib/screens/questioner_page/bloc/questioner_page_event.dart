@@ -1,5 +1,3 @@
-
-
 part of 'questioner_page_bloc.dart';
 
 @immutable
@@ -18,11 +16,11 @@ class AnswerInputEvent extends QuestionerPageEvent {
 }
 
 class GetListQuestionerEvent extends QuestionerPageEvent {
+  final String category;
 
-  GetListQuestionerEvent();
+  GetListQuestionerEvent(this.category);
 }
 
 class QuestionerPageInitialEvent extends QuestionerPageEvent {
-
   QuestionerPageInitialEvent();
 }

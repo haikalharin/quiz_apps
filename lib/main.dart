@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_apps/common/app_theme.dart';
 import 'package:quiz_apps/core/router/app_router.dart';
 import 'package:quiz_apps/core/router/routes.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // import 'package:quiz_apps/core/router/router.dart' as router;
 
+import 'common/theme/my_theme.dart';
 import 'core/network/firebase_service.dart';
 import 'di.dart';
 
@@ -45,7 +47,7 @@ void main() async {
         messagingSenderId: '109787532943',
         projectId: 'quizapps-4f1a9'),
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -53,19 +55,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<PostBloc>(create: (context) => getIt<PostBloc>()),
-        BlocProvider<QuestionerPageBloc>(
-            create: (context) => getIt<QuestionerPageBloc>()),
-      ],
-      child: MaterialApp(
-        // debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightAppTheme,
-        navigatorKey: AppRouter.navigatorKey,
-        onGenerateRoute: AppRouter.generateRoute,
-        initialRoute: Routes.welcomePage,
-      ),
+    return ScreenUtilInit(
+        designSize: const Size(360, 690),
+    minTextAdapt: true,
+    splitScreenMode: true,
+    builder: (BuildContext context, Widget? child) {
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider<PostBloc>(create: (context) => getIt<PostBloc>()),
+          BlocProvider<QuestionerPageBloc>(
+              create: (context) => getIt<QuestionerPageBloc>()),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: MyTheme.getThemeData(isLight: false),
+          navigatorKey: AppRouter.navigatorKey,
+          onGenerateRoute: AppRouter.generateRoute,
+          initialRoute: Routes.welcomePage,
+        ),
+      );
+    }
     );
   }
 }
