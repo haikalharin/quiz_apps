@@ -1,5 +1,5 @@
-import 'package:base_mvvm/core/network/api_config.dart';
-import 'package:base_mvvm/core/network/dio_interceptor.dart';
+import 'package:quiz_apps/core/network/api_config.dart';
+import 'package:quiz_apps/core/network/dio_interceptor.dart';
 import 'package:dio/dio.dart' show Dio, ResponseType;
 
 class DioClient {

@@ -1,5 +1,5 @@
-import 'package:base_mvvm/core/bloc/generic_bloc_state.dart';
-import 'package:base_mvvm/core/network/api_result.dart';
+import 'package:quiz_apps/core/bloc/generic_bloc_state.dart';
+import 'package:quiz_apps/core/network/api_result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum ApiOperation { select, create, update, delete }

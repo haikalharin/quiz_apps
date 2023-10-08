@@ -1,5 +1,5 @@
-import 'package:base_mvvm/data/api/login/login.dart';
-import 'package:base_mvvm/data/model/login_model/login_model.dart';
+import 'package:quiz_apps/data/api/login/login.dart';
+import 'package:quiz_apps/data/model/login_model/login_model.dart';
 
 import '../../core/network/api_result.dart';
 import '../../core/repository/repository_helper.dart';

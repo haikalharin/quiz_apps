@@ -1,5 +1,5 @@
-import 'package:base_mvvm/common/app_style.dart';
-import 'package:base_mvvm/common/app_string.dart';
+import 'package:quiz_apps/common/app_style.dart';
+import 'package:quiz_apps/common/app_string.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {

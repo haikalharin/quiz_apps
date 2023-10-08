@@ -1,7 +1,7 @@
-import 'package:base_mvvm/core/network/api_result.dart';
-import 'package:base_mvvm/core/repository/repository_helper.dart';
-import 'package:base_mvvm/data/api/todo/todo_api.dart';
-import 'package:base_mvvm/data/model/todo/todo.dart';
+import 'package:quiz_apps/core/network/api_result.dart';
+import 'package:quiz_apps/core/repository/repository_helper.dart';
+import 'package:quiz_apps/data/api/todo/todo_api.dart';
+import 'package:quiz_apps/data/model/todo/todo.dart';
 
 class TodoRepository with RepositoryHelper<ToDo> {
   final ToDoApi todoApi;

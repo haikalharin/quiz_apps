@@ -1,8 +1,8 @@
-import 'package:base_mvvm/core/bloc/bloc_helper.dart';
-import 'package:base_mvvm/core/bloc/generic_bloc_state.dart';
-import 'package:base_mvvm/data/model/comment/comment.dart';
-import 'package:base_mvvm/repository/comment/comment_repository.dart';
-import 'package:base_mvvm/viewmodel/comment/bloc/comment_event.dart';
+import 'package:quiz_apps/core/bloc/bloc_helper.dart';
+import 'package:quiz_apps/core/bloc/generic_bloc_state.dart';
+import 'package:quiz_apps/data/model/comment/comment.dart';
+import 'package:quiz_apps/repository/comment/comment_repository.dart';
+import 'package:quiz_apps/viewmodel/comment/bloc/comment_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 typedef Emit = Emitter<GenericBlocState<Comment>>;

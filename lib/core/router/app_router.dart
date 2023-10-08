@@ -1,18 +1,39 @@
-import 'package:base_mvvm/core/router/routes.dart';
-import 'package:base_mvvm/screens/login_page/screen/login_screen.dart';
-import 'package:base_mvvm/screens/user/user_list_screen.dart';
+import 'package:quiz_apps/core/router/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz_apps/data/firebase/firebaseDao.dart';
+import 'package:quiz_apps/screens/welcome_page/screen/welcome_page.dart';
 
-import '../../screens/navbar_page/bottom_nav.dart';
+import '../../common/remote_utils.dart';
+import '../../screens/category_page/screen/category_page.dart';
+import '../../screens/questioner_page/questioner_page.dart';
+
+
 
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  static Map<String, Widget Function(BuildContext context)> generateRoute() {
-    return {
-      Routes.userList: (context) => const UserListScreen(),
-      Routes.loginPage: (context) => const LoginScreen(),
-      Routes.navbarPage: (context) =>  NavbarPage(),
-    };
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case Routes.welcomePage:
+        return MaterialPageRoute(builder: (_) => WelcomePage());
+      case Routes.categoriPage:
+        return MaterialPageRoute(builder: (_) => CategoryPage());
+      case Routes.questionerPage:
+        return MaterialPageRoute(
+            builder: (_) => QuestionerPage(
+              quizData: getquestioner(settings.arguments),
+            ));
+
+      default:
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(child: Text('No route defined for ${settings.name}')),
+          ),
+        );
+    }
   }
+
+  static Map<String, WidgetBuilder> _getCombinedRoutes() => {};
+
+  static Map<String, WidgetBuilder> getAll() => _getCombinedRoutes();
 }

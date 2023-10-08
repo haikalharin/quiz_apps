@@ -1,4 +1,4 @@
-import 'package:base_mvvm/common/app_asset.dart';
+import 'package:quiz_apps/common/app_asset.dart';
 import 'package:flutter/material.dart';
 
 extension StringExtension on String {

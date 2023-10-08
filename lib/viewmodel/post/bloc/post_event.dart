@@ -1,5 +1,5 @@
-import 'package:base_mvvm/data/model/post/post.dart';
-import 'package:base_mvvm/data/model/user/user.dart';
+import 'package:quiz_apps/data/model/post/post.dart';
+import 'package:quiz_apps/data/model/user/user.dart';
 
 abstract class PostEvent {}
 

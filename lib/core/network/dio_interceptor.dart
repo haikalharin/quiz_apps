@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:base_mvvm/common/app_extension.dart';
+import 'package:quiz_apps/common/app_extension.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 

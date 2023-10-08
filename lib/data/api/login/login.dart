@@ -1,4 +1,4 @@
-import 'package:base_mvvm/data/model/login_model/login_model.dart';
+import 'package:quiz_apps/data/model/login_model/login_model.dart';
 
 import '../../../core/network/api_helper.dart';
 import '../../../core/network/dio_client.dart';

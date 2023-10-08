@@ -1,8 +1,8 @@
-import 'package:base_mvvm/core/network/api_config.dart';
-import 'package:base_mvvm/core/network/api_helper.dart';
-import 'package:base_mvvm/core/network/dio_client.dart';
-import 'package:base_mvvm/data/model/post/post.dart';
-import 'package:base_mvvm/data/model/user/user.dart';
+import 'package:quiz_apps/core/network/api_config.dart';
+import 'package:quiz_apps/core/network/api_helper.dart';
+import 'package:quiz_apps/core/network/dio_client.dart';
+import 'package:quiz_apps/data/model/post/post.dart';
+import 'package:quiz_apps/data/model/user/user.dart';
 
 class PostApi with ApiHelper<Post> {
   final DioClient dioClient;

@@ -1,5 +1,5 @@
-import 'package:base_mvvm/core/network/api_result.dart';
-import 'package:base_mvvm/core/network/dio_exception.dart';
+import 'package:quiz_apps/core/network/api_result.dart';
+import 'package:quiz_apps/core/network/dio_exception.dart';
 import 'package:dio/dio.dart';
 
 mixin RepositoryHelper<T> {
