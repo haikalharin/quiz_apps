@@ -3,4 +3,5 @@ mixin Routes {
   static const String welcomePage = '/welcomePage';
   static const String categoriPage = '/categoriPage';
   static const String questionerPage = '/questionerPage';
+  static const String resultPage = '/resultPage';
 }

@@ -23,7 +23,7 @@ class QuestionerPageBloc extends Bloc<QuestionerPageEvent, QuestionerPageState> 
   QuestionerPageBloc({required this.questionerRepository})
       : super(const QuestionerPageState()) {
     on<UserNameInputEvent>(userNameInput);
-    on<PasswordInputEvent>(passwordInput);
+    on<AnswerInputEvent>(answerInput);
     on<GetListQuestionerEvent>(getListQuestioner);
     on<QuestionerPageInitialEvent>(loginPageInitial);
   }
@@ -40,10 +40,12 @@ class QuestionerPageBloc extends Bloc<QuestionerPageEvent, QuestionerPageState> 
     ));
   }
 
-  Future<void> passwordInput(
-      PasswordInputEvent event, Emitter<QuestionerPageState> emit) async {
+  Future<void> answerInput(
+      AnswerInputEvent event, Emitter<QuestionerPageState> emit) async {
     emit(state.copyWith(
-      password: encrypt(event.password),
+      listAnswer: event.listAnswer,
+      status: QuestionerPageStatus.success,
+      moveTo: Routes.resultPage,
     ));
   }
 

@@ -11,10 +11,10 @@ class UserNameInputEvent extends QuestionerPageEvent {
   UserNameInputEvent(this.userName);
 }
 
-class PasswordInputEvent extends QuestionerPageEvent {
-  final String password;
+class AnswerInputEvent extends QuestionerPageEvent {
+  final List<String> listAnswer;
 
-  PasswordInputEvent(this.password);
+  AnswerInputEvent(this.listAnswer);
 }
 
 class GetListQuestionerEvent extends QuestionerPageEvent {

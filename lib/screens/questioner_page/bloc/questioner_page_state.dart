@@ -20,29 +20,33 @@ class QuestionerPageState extends Equatable {
   final String? password;
   final String? moveTo;
   final List<QuestionerModel>? listQuestionerModel;
+  final List<String>? listAnswer;
 
   const QuestionerPageState({
     this.listQuestionerModel,
     this.username,
     this.moveTo,
     this.password,
+    this.listAnswer,
     this.status = QuestionerPageStatus.initial,
   });
 
   @override
-  List<Object?> get props => [username, password, status];
+  List<Object?> get props => [username, password, status,listQuestionerModel,listAnswer];
 
   QuestionerPageState copyWith({
     String? username,
     String? password,
     String? moveTo,
     QuestionerPageStatus? status,
+    List<String>? listAnswer,
     List<QuestionerModel>? listQuestionerModel,
   }) {
     return QuestionerPageState(
       username: username ?? this.username,
       password: password ?? this.password,
       moveTo: moveTo ?? this.moveTo,
+      listAnswer: listAnswer ?? this.listAnswer,
       listQuestionerModel: listQuestionerModel ?? this.listQuestionerModel,
       status: status ?? QuestionerPageStatus.initial,
     );

@@ -2,7 +2,9 @@
 
 dynamic getDataValue(dynamic result) => result;
 
-dynamic getquestioner(dynamic result) => result['questioner'];
+dynamic getQuestioner(dynamic result) => result['questioner'];
+
+dynamic getAnswer(dynamic result) => result['answer'];
 
 dynamic getDataList(dynamic result) => result['total_results'];
 

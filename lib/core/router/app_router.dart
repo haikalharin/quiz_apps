@@ -1,6 +1,7 @@
 import 'package:quiz_apps/core/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_apps/data/firebase/firebaseDao.dart';
+import 'package:quiz_apps/screens/result_page/screen/result_page.dart';
 import 'package:quiz_apps/screens/welcome_page/screen/welcome_page.dart';
 
 import '../../common/remote_utils.dart';
@@ -21,7 +22,13 @@ class AppRouter {
       case Routes.questionerPage:
         return MaterialPageRoute(
             builder: (_) => QuestionerPage(
-              quizData: getquestioner(settings.arguments),
+              quizData: getQuestioner(settings.arguments),
+            ));
+
+      case Routes.resultPage:
+        return MaterialPageRoute(
+            builder: (_) => ResultsPage(
+              quizData: getQuestioner(settings.arguments), userAnswers: getAnswer(settings.arguments),
             ));
 
       default:
