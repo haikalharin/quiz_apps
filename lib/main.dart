@@ -7,8 +7,6 @@ import 'package:quiz_apps/core/router/app_router.dart';
 import 'package:quiz_apps/core/router/routes.dart';
 import 'package:quiz_apps/environment_config.dart';
 import 'package:quiz_apps/screens/questioner_page/bloc/questioner_page_bloc.dart';
-import 'package:quiz_apps/viewmodel/comment/bloc/comment_bloc.dart';
-import 'package:quiz_apps/viewmodel/post/bloc/post_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +60,6 @@ class MyApp extends StatelessWidget {
     builder: (BuildContext context, Widget? child) {
       return MultiBlocProvider(
         providers: [
-          BlocProvider<PostBloc>(create: (context) => getIt<PostBloc>()),
           BlocProvider<QuestionerPageBloc>(
               create: (context) => getIt<QuestionerPageBloc>()),
         ],

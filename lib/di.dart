@@ -4,15 +4,10 @@ import 'package:quiz_apps/data/api/post/post_api.dart';
 import 'package:quiz_apps/data/api/questioner/questioner_api.dart';
 import 'package:quiz_apps/data/api/todo/todo_api.dart';
 import 'package:quiz_apps/data/api/user/user_api.dart';
-import 'package:quiz_apps/repository/comment/comment_repository.dart';
-import 'package:quiz_apps/repository/login/login_repository.dart';
-import 'package:quiz_apps/repository/post/post_repository.dart';
 import 'package:quiz_apps/repository/questioner/questioner_repository.dart';
 import 'package:quiz_apps/repository/todo/todo_repository.dart';
 import 'package:quiz_apps/repository/user/user_repository.dart';
 import 'package:quiz_apps/screens/questioner_page/bloc/questioner_page_bloc.dart';
-import 'package:quiz_apps/viewmodel/comment/bloc/comment_bloc.dart';
-import 'package:quiz_apps/viewmodel/post/bloc/post_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -53,31 +48,12 @@ Future<void> init() async {
     () => TodoRepository(todoApi: getIt<ToDoApi>()),
   );
 
-  // Post repository
-  getIt.registerLazySingleton<PostRepository>(
-    () => PostRepository(postApi: getIt<PostApi>()),
-  );
-  // Comment repository
-  getIt.registerLazySingleton<CommentRepository>(
-    () => CommentRepository(commentApi: getIt<CommentApi>()),
-  );
-
-  // Login repository
-  getIt.registerLazySingleton<LoginRepository>(
-        () => LoginRepository(loginApi: getIt<LoginApi>()),
-  );
 
   // Questioner repository
   getIt.registerLazySingleton<QuestionerRepository>(
         () => QuestionerRepository(questionerApi: getIt<QuestionerApi>()),
   );
 
-
-  //Post Bloc
-  getIt.registerLazySingleton(() => PostBloc(postRepository: getIt<PostRepository>()));
-
-  //Comment Bloc
-  getIt.registerLazySingleton(() => CommentBloc(commentRepository: getIt<CommentRepository>()));
 
   //Questioner Bloc
   getIt.registerLazySingleton(() => QuestionerPageBloc( questionerRepository: getIt<QuestionerRepository>()));

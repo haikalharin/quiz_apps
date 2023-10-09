@@ -11,7 +11,6 @@ import 'package:quiz_apps/repository/questioner/questioner_repository.dart';
 import '../../../common/secure.dart';
 import '../../../core/router/routes.dart';
 import 'package:equatable/equatable.dart';
-import '../../../repository/login/login_repository.dart';
 
 part 'questioner_page_event.dart';
 
