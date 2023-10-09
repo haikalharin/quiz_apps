@@ -61,7 +61,7 @@ class WelcomePage extends StatelessWidget {
                   String category = listCategory[index];
                   getIt<QuestionerPageBloc>()
                       .add(GetListQuestionerEvent(category));
-                  
+
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.blue,
@@ -98,34 +98,42 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.share),
-                      onPressed: () {
-                        launchUrlWa(
-                            "Lets Play and Learn");
-                      },
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      launchUrlWa("Lets Play and Learn");
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.share),
+                            onPressed: () {
+                              launchUrlWa("Lets Play and Learn");
+                            }
+                          ),
+                          Text("Share")
+                        ],
+                      ),
                     ),
-                    Text("Share")
-                  ],
-                ),
-                SizedBox(width: 10),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.star),
-                      onPressed: () {
-                        // Add rate functionality here
-                      },
-                    ),
-                    Text("Rate us")
-                  ],
-                ),
-              ],
+                  ),
+                  SizedBox(width: 10),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.star),
+                        onPressed: () {
+                          // Add rate functionality here
+                        },
+                      ),
+                      Text("Rate us")
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
