@@ -85,112 +85,118 @@ class _QuizPageState extends State<QuestionerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Quiz App'),
-        actions: [
-          // Add your right-aligned action here
-          TextButton(
-            style: ButtonStyle(
-              side: MaterialStateProperty.all<BorderSide>(
-                BorderSide(
-                  color: Colors.blue, // Change this color to your desired border color
-                  width: 0.0, // You can adjust the width of the border
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text('Quiz App'),
+          actions: [
+            // Add your right-aligned action here
+            TextButton(
+              style: ButtonStyle(
+                side: MaterialStateProperty.all<BorderSide>(
+                  BorderSide(
+                    color: Colors.blue, // Change this color to your desired border color
+                    width: 0.0, // You can adjust the width of the border
+                  ),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routes.welcomePage,
+                      (Route<dynamic> route) => false,
+                );
+              },
+              child: const Text(
+                'Exit',
+                style: TextStyle(
+                  color: Colors.white,
                 ),
               ),
             ),
-            onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                Routes.welcomePage,
-                    (Route<dynamic> route) => false,
-              );
-            },
-            child: const Text(
-              'Exit',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: BlocListener<QuestionerPageBloc, QuestionerPageState>(
-        listener: (context, state) {
-          if (state.status.isSuccess && state.moveTo == Routes.resultPage) {
-            Navigator.of(context).pushNamed(Routes.resultPage, arguments: {
-              "questioner": state.listQuestionerModel,
-              "answer": state.listAnswer,
-              "correct": totalCorrect,
-            });
-          }
-        },
-        child: BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
-          builder: (context, state) {
-            final currentQuestion = state.listQuestionerModel != null &&
-                    state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].question
-                : "";
-            final currentImage = state.listQuestionerModel != null &&
-                state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].imagePath
-                : "";
-            final List<String> currentAnswers =
-                state.listQuestionerModel != null &&
-                        state.listQuestionerModel!.isNotEmpty
-                    ? state.listQuestionerModel![currentIndex].answers
-                    : [];
-            final currentCorrectAnswers = state.listQuestionerModel != null &&
-                    state.listQuestionerModel!.isNotEmpty
-                ? state.listQuestionerModel![currentIndex].correctAnswer
-                : "";
-            return currentQuestion.isNotEmpty
-                ? Stack(
-                    children: [
-                      Column(
-                        children: [
-                          LinearProgressIndicator(
-                            value: progressValue,
-                            minHeight: 10.0,
-                            backgroundColor: Colors.grey[300],
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.yellow),
-                          ),
-                          SizedBox(height: 16.0),
-                          QuizCard(
-                            currentQuestion,
-                            currentImage,
-                            currentAnswers,
-                            currentCorrectAnswers,
-                            nextQuestion: () {
-                              setState(() {
-                                if (currentIndex <
-                                    widget.quizData!.length - 1) {
-                                  currentIndex++;
-                                  progressValue = 0.0;
-                                  isChoise = false;
-                                  isIgnore = false;
-                                  startTimer();
-                                } else {
-                                  getIt<QuestionerPageBloc>()
-                                      .add(AnswerInputEvent(listAnswer));
-                                  timer.cancel();
-                                  // You can add logic to show a result screen or do something else here
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                : timer.tick > 10
-                    ? Container(
-                        child: const Center(
-                          child: Text("data not found"),
-                        ),
-                      )
-                    : SpinKitIndicator(type: SpinKitType.circle);
+          ],
+        ),
+        body: BlocListener<QuestionerPageBloc, QuestionerPageState>(
+          listener: (context, state) {
+            if (state.status.isSuccess && state.moveTo == Routes.resultPage) {
+              Navigator.of(context).pushNamed(Routes.resultPage, arguments: {
+                "questioner": state.listQuestionerModel,
+                "answer": state.listAnswer,
+                "correct": totalCorrect,
+              });
+            }
           },
+          child: BlocBuilder<QuestionerPageBloc, QuestionerPageState>(
+            builder: (context, state) {
+              final currentQuestion = state.listQuestionerModel != null &&
+                      state.listQuestionerModel!.isNotEmpty
+                  ? state.listQuestionerModel![currentIndex].question
+                  : "";
+              final currentImage = state.listQuestionerModel != null &&
+                  state.listQuestionerModel!.isNotEmpty
+                  ? state.listQuestionerModel![currentIndex].imagePath
+                  : "";
+              final List<String> currentAnswers =
+                  state.listQuestionerModel != null &&
+                          state.listQuestionerModel!.isNotEmpty
+                      ? state.listQuestionerModel![currentIndex].answers
+                      : [];
+              final currentCorrectAnswers = state.listQuestionerModel != null &&
+                      state.listQuestionerModel!.isNotEmpty
+                  ? state.listQuestionerModel![currentIndex].correctAnswer
+                  : "";
+              return currentQuestion.isNotEmpty
+                  ? Stack(
+                      children: [
+                        Column(
+                          children: [
+                            LinearProgressIndicator(
+                              value: progressValue,
+                              minHeight: 10.0,
+                              backgroundColor: Colors.grey[300],
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.yellow),
+                            ),
+                            SizedBox(height: 16.0),
+                            QuizCard(
+                              currentQuestion,
+                              currentImage,
+                              currentAnswers,
+                              currentCorrectAnswers,
+                              nextQuestion: () {
+                                setState(() {
+                                  if (currentIndex <
+                                      widget.quizData!.length - 1) {
+                                    currentIndex++;
+                                    progressValue = 0.0;
+                                    isChoise = false;
+                                    isIgnore = false;
+                                    startTimer();
+                                  } else {
+                                    getIt<QuestionerPageBloc>()
+                                        .add(AnswerInputEvent(listAnswer));
+                                    timer.cancel();
+                                    // You can add logic to show a result screen or do something else here
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : timer.tick > 10
+                      ? Container(
+                          child: const Center(
+                            child: Text("data not found"),
+                          ),
+                        )
+                      : SpinKitIndicator(type: SpinKitType.circle);
+            },
+          ),
         ),
       ),
     );

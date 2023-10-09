@@ -41,6 +41,7 @@ class _ResultsPageState extends State<ResultsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text('Quiz Results'),
         ),
         body: Column(
