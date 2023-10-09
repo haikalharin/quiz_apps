@@ -6,6 +6,8 @@ dynamic getDataValue(dynamic result) => result;
 
 dynamic getQuestioner(dynamic result) => result['questioner'];
 
+dynamic getQuestionerState(dynamic result) => result['questionerState'];
+
 dynamic getAnswer(dynamic result) => result['answer'];
 
 dynamic getCorrect(dynamic result) => result['correct'];
